@@ -1,0 +1,115 @@
+---
+title: "Data 607 Assignment Week 7"
+author: "Leticia Salazar"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document:
+    theme: journal
+---
+
+<style>
+  h2{
+    font-size: 50px !important;
+    color: crimson !important
+  }
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, repos = "http://cran.us.r-project.org")
+```
+
+
+
+### **Assignment - Working with XML and JSON in R**
+
+
+
+#### Pick three of your favorite books on one of your favorite subjects. At least one of the books should have more than one author. For each book, include the title, authors, and two or three other attributes that you find interesting.
+
+#### Take the information that you've selected about these three books, and separately create three files which store the book's information in HTML (using an html table), XML, and JSON formats (e.g. "books.html", "books.xml", "books.json"). To help you better understand the different file structures, I'd prefer that you create each of these files "by hand" unless you're already very comfortable with the file formats.
+
+#### Write R code, using your packages of choice, to load the information from each of the three sources into separate R data frames. Are the three data frames identical?
+
+#### Your deliverable is the three source files and the R code. If you can, package your assignment solution up into an .Rmd file and publish to rpubs.com [This will also require finding a way to make your three text files accessible from the web.]
+
+```{r}
+#Install Packages
+#install.packages("XML")
+#install.packages("rjson")
+```
+
+
+```{r}
+#Import Libraries
+library(tidyverse)
+library(RCurl)
+library(XML)
+library(jsonlite)
+library(methods)
+library(dplyr)
+```
+
+### To create these files, I used [Visual Studio Code](https://code.visualstudio.com/) which is a great tool for Macs, Windows, or Linux, etc. Upon creating a new file it gives you an option to select what type of file you want to create, in this case HTML, XML and JSON. Once the files were created, I imported them to [my GitHub](https://github.com/letisalba/Data607_Assignment_Week7) and the results are below:
+
+
+### **HTML**
+```{r}
+#Read HTML table
+HTML_File <- getURL("https://raw.githubusercontent.com/letisalba/Data607_Assignment_Week7/main/Books.html")
+
+#Set file as data frame
+books_html <- as.data.frame(readHTMLTable(HTML_File, stringAsFactors = FALSE))
+books_html
+```
+
+
+### **XML**
+```{r}
+#Read XML File
+XML_File <-  getURL("https://raw.githubusercontent.com/letisalba/Data607_Assignment_Week7/main/Books2.xml")
+
+#Parse File
+books_xml <-  xmlParse(XML_File)
+
+#Set file as data frame
+books_xml2 <-  xmlToDataFrame(books_xml)
+books_xml2
+```
+
+
+### **JSON**
+```{r}
+#Load JSON file
+JSON_File <- fromJSON("https://raw.githubusercontent.com/letisalba/Data607_Assignment_Week7/main/Books2.json")
+
+#Set file as data frame
+books_json <- as.data.frame(JSON_File)
+books_json
+```
+
+
+### **Are the three data frames identical?**
+
+#### _At first glance it seems like the data frames are identical. The more I analyzed it I noticed:_
+
+####  _For the HTML, XML, and JSON there are 6 columns and 3 rows, all named very similar. With some tidying, I'd rename the columns, drop the NULL in HTML column names and remove "Books." in JSON column names._
+####  _For all except for "Price" in JSON, it's characterized as a character, where as "Price" in the JSON file is characterize as numeric even though all three were written the same way when creating each file._
+
+```{r}
+#Glimpse of HTML
+glimpse(books_html)
+```
+
+
+```{r}
+#Glimpse of XML
+glimpse(books_xml2)
+```
+
+
+```{r}
+#Glimpse of JSON
+glimpse(books_json)
+```
+

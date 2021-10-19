@@ -1,0 +1,442 @@
+---
+title: "Data 607 Project2"
+author: "Leticia Salazar"
+collaborators: "Chinedu Onyeka, Tyler Baker"
+date: "`r Sys.Date()`"
+output:
+  html_document: "default"
+  pdf_document: "default"
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### The goal of this assignment is to give you practive in preparing different datasets for downstram analysis work.
+
+#### Your task is to:
+(1) Choose any three of the "wide" datasets identified in the Week 6 Discussion items. (You may use your own dataset; please don't use my Sample Post dataset, since that was used in your Week 6 assignment!) **For each of the three chosen datasets**
+* Create a .CSV file (or optionally, a MySQL database!) that includes all of the information included in the dataset. You're encouraged to use a "wide" structure similar to how the information appears in the discussion item, so that you can practice tidying and transformations as described below.
+* Read the information from your .CSV file into R, and use tidyr and dplyr as needed to tidy and transform your data. [Most of your grade will be based on this step!]
+* Perform the analysis requested in the discussion item.
+* Your code should be in an R Markdown file, posted to rpubs.com, and should include narrative descriptions of your data cleanup work, analysis, and conclusions.
+
+(2) Please include in your homework submission, **for each of the three chosen datasets**:
+* The URL to the .Rmd file in your GitHub repository, and 
+* The URL for your rpubs.com web page.
+
+_Note: My collaborators (Chinedu and Tyler) and I were each responsible to tidy one data set which we would then share and join into our project 2. Below you'll see the data set I chose to tidy._
+
+***
+
+
+#### Load the Libraries
+```{r}
+#Import libraries
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(hrbrthemes)
+```
+
+#### About the Dataset
+
+##### The dataset was taken from Kaggle.com which was originally taken from an article called Hotel Booking Demands Datasets https://www.sciencedirect.com/science/article/pii/S2352340918315191. 
+
+#### It contains 32 columns listed below with a brief description:
+
+_Columns _                      | _Description_
+--------------------------------|---------------------------------------------
+Hotel                           | H1 = Resort Hotel, H2 = City Hotel
+is_canceled                     | 1 = cancelled, 0 = not cancelled
+lead_time                       | number of days that elapsed between entering the data into the Property Management System (PMS) and arrival date
+arrival_date_year               | year of arrival date
+arrival_date_month              | month of arrival date
+arrival_date_week_number        | week number of year for arrival date
+arrival_date_day_of_month       | day of arrival date
+stays_in_weekend_nights         | number of weekend nights (Saturday or Sunday) the guest stayed or booked to stay at the hotel
+stays_in_week_night             | number of weeknights (Monday - Friday) the guest stayed or booked to stay at the hotel
+adults                          | number of adults
+children                        | number of children
+babies                          | number of babies
+meal                            | types of meals booked: Undefined/SC = no meal package, BB = Bed & Breakfast, HB = Half board (breakfast and one other meal - usual dinner), FB = Full board (breakfast, lunch and dinner)
+country                         | country of origin, categories are represented in the ISO 355-3.2013 format
+market_segment                  | market segment designation, TA = Travel Agent, TO = Tour Operators
+distribution_channel            | booking distribution channel, TA = Travel Agent, TO = Tour
+is_repeated_guest               | Value indicating if the booking name was from a repeated guest (1) or not (0)
+previous_cancellations          | number of previous bookings that were cancelled by the customer prior to the current booking
+previous_booking_not_canceled   | number of previous bookings not cancelled by the customer prior to the current booking
+reserved_room_type              | code of room type reserved; Code is presented instead of designation for anonymity reasons
+assigned_room_type              | code for the type of room assigned to the booking. Sometimes the assigned room type differs from the reserved room type due to hotel operation reasons (e.g. overbooking) or by customer request. Code is presented instead of designation for anonymity reasons.
+booking_changes                 | number of changes/amendments made to the booking from the moment the booking was entered on the PMS until the moment of check-in or cancellation
+deposit_type                    | indication on if the customer made a deposit to guarantee the booking. No Deposit = no deposit was made, Non Refund = a deposit was made in the value of the total stay cost, Refundable = a deposit was made with a value under the total cost of stay
+agent                           | ID of the travel agency that made the booking
+company                         | ID of the company/entity that made the booking or responsible for paying the booking. ID is presented instead of designation for anonymity reasons
+days_in_waiting_list            | number of days the booking was in the waiting list before it was confirmed to the customer
+customer_type                   | type of booking; Contract = when the booking has an allotment or other type of contract associate to it, Group = when the booking is associated to a group, Transient = when the booking is not part of a group or contract, and is not associated to other transient booking, Transient-party = when the booking is transient, but is associated to at least other transient booking
+adr                             | Average Daily Rate as defined by dividing the sum of all lodging transactions by the total number of staying nights
+required_car_parking_spaces     | number of car parking spaces required by the customer
+total_of_special_requests       | number of special requests made by the customer (e.g. twin bed or high floor)
+reservation_status              | reservation last status; Canceled = booking was canceled by the customer, Check-Out = customer has checked in but already departed, No-Show = customer did not check-in and did inform the hotel of the reason why
+reservation_status_date         | date at which the last status was set. This variable can be used in conjunction with the ReservationStatus to understand when was the booking canceled or when did the customer checked-out of the hotel
+
+
+
+***
+  
+  
+##### With this dataset I am looking to analyze the following:
+
+* Cancellations of hotel with the arrival date month 
+* Cancellations of hotel with arrival date year
+
+##### I would also like to analyze the following
+
+* What type of hotels do repeated guest book?
+* What type of customers tend to be repeated guests?
+* Do repeated guests have a preferred meal choice?
+* Do guests have special requests?
+* How do total stays compare with total costs at hotels?
+
+
+***
+
+
+#### Load the data set
+```{r}
+theUrl <- "https://raw.githubusercontent.com/letisalba/Data607_Project2/main/hotel_bookings%202.csv"
+
+hotel_booking <- read.csv(file = theUrl, header = TRUE, sep = ",")
+head(hotel_booking)
+```
+
+
+### Data Wrangling
+```{r}
+#Get column names
+colnames(hotel_booking)
+```
+
+
+```{r}
+#Rename column names for more clarity
+colnames(hotel_booking) <-  c("Hotel", "Cancellation_Status", "Lead_Time", "Arrival_Year", "Arrival_Month", "Arrival_Week", "Arrival_Day_of_Month", "Stays_Weekend_Nights", "Stays_Week_Nights", "Adults", "Children", "Babies", "Meal", "Country", "Market_Segment", "Distribution_Channel", "Repeated_Guest", "Previous_Cancellations", "Prev_Non_Cancellations", "Reserved_Room", "Assigned_Room", "Booking_Changes", "Deposit_Type", "Agent", "Company", "Days_Waitlisted", "Customer_Type", "ADR", "Required_Parking_Spaces", "Special_Requests", "Reservation_Status", "Reservation_Status_Date")
+head(hotel_booking)
+```
+
+
+```{r}
+#Glimpse of data
+glimpse(hotel_booking)
+```
+
+
+```{r}
+#Summary of columns in data
+summary(hotel_booking)
+```
+
+
+```{r}
+#Convert columns to factor
+hotel_bookings <- hotel_booking %>% 
+   mutate(Cancellation_Status = as.factor(Cancellation_Status), 
+          Meal = as.factor(Meal),
+          Repeated_Guest = as.factor(Repeated_Guest),
+         )
+head(hotel_booking, n = 4)
+```
+
+
+```{r}
+#Calculate total cost of stays and the total number of stays for each reservation and create two separate columns for each
+
+hotel_bookings <- hotel_booking %>% 
+  mutate(Stays_Total = Stays_Weekend_Nights + Stays_Week_Nights,
+       Stays_Total_Cost = ADR * Stays_Total)
+head(hotel_bookings, n = 4)
+```
+
+
+```{r}
+#Find missing values
+colSums(is.na(hotel_bookings))
+
+#There are 4 values missing in children
+```
+
+
+```{r}
+#Replace missing values in Children by using the Median
+#By using the Median it will allow for those missing values to be added without trying to guess what number to input. Using the number 0 would have also worked without skewing the data.
+
+children_median <- median(hotel_bookings$Children, na.rm = TRUE)
+
+hotel_bookings$Children[is.na(hotel_bookings$Children)] <- children_median
+
+head(hotel_bookings, n = 4)
+```
+
+
+```{r}
+#Check to see if there's any other missing values
+colSums(is.na(hotel_bookings))
+```
+
+
+```{r}
+#Replace all NULL values in data set
+hotel_bookings2 <- hotel_bookings %>% replace(.=="NULL", 0) # replace with 0
+head(hotel_bookings2, n = 4)
+```
+
+
+```{r}
+#Replacing values in Cancellation_Status column so that 0 = not cancelled and 1 = cancelled
+hotel_bookings3<- recode(hotel_bookings2$Cancellation_Status,
+                              "0" = "Not_Cancelled",
+                              "1" = "Cancelled")    
+head(hotel_bookings3)
+```
+
+
+```{r}
+#Replacing values in Repeated_Guest column so that 0 = new guest and 1 = repeated guest
+hotel_bookings4 <- recode(hotel_bookings2$Repeated_Guest,
+                              "0" = "New_Guest",
+                              "1" = "Repeated_Guest")    
+head(hotel_bookings4)
+```
+
+
+```{r}
+#cbind 3 tables 
+hotelbookings <-  cbind(hotel_bookings2, hotel_bookings3, hotel_bookings4)
+
+#Drop rows not needed
+hotelbookings <- hotelbookings[, -c(2, 15:17, 20, 21, 23:25, 29, 32)]
+
+head(hotelbookings)
+```
+
+```{r}
+#Get column names
+colnames(hotelbookings)
+```
+
+
+```{r}
+#Rename column names
+colnames(hotelbookings) <-  c("Hotel", "Lead_Time", "Arrival_Year", "Arrival_Month", "Arrival_Week", "Arrival_Day_of_Month", "Stays_Weekend_Nights", "Stays_Week_Nights", "Adults", "Children", "Babies", "Meal", "Country", "Previous_Cancellations", "Prev_Non_Cancellations", "Booking_Changes", "Days_Waitlisted", "Customer_Type", "ADR", "Special_Requests", "Reservation_Status", "Stays_Total", "Stays_Total_Cost", "Cancellation_Status", "Is_Repeated_Guest")
+
+#Reorder columns
+col_order <- c("Hotel", "Cancellation_Status", "Lead_Time", "Arrival_Year", "Arrival_Month", "Arrival_Week", "Arrival_Day_of_Month", "Stays_Weekend_Nights", "Stays_Week_Nights", "Stays_Total", "Stays_Total_Cost", "Adults", "Children", "Babies", "Meal", "Country", "Is_Repeated_Guest", "Previous_Cancellations", "Prev_Non_Cancellations", "Booking_Changes", "Days_Waitlisted", "Customer_Type", "ADR", "Special_Requests", "Reservation_Status")
+
+hotelbookings <- hotelbookings[, col_order]
+head(hotelbookings)
+```
+
+
+### Data Exploration
+
+
+##### **City Hotels have the hightest number of bookings**
+```{r}
+#Count of Hotels
+Hotel <- hotel_bookings2%>%
+  group_by(Hotel)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Hotel)
+```
+
+
+##### **There has been more non cancellations than cancellations when booking**
+```{r}
+#Count of Cancellation_Status
+Cancellation_Status <- hotel_bookings2%>%
+  group_by(Cancellation_Status)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Cancellation_Status)
+```
+
+
+##### **August and July are the two highest months when hotels are booked**
+```{r}
+#Count of Arrival_Month
+Arrival_Month <- hotel_bookings2%>%
+  group_by(Arrival_Month)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Arrival_Month)
+```
+
+
+##### **Zero and two weekend nights are amongst the highest guest have stayed in a hotel**
+```{r}
+#Count of Stays_Weekend_Nights
+Stays_Weekend <- hotel_bookings2%>%
+  group_by(Stays_Weekend_Nights)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Stays_Weekend)
+```
+
+
+##### **Two and one week nights are the most guest stay or book to stay at the hotel.**
+```{r}
+#Count of Stays_Week_Nights
+Stays_Week <- hotel_bookings2%>%
+  group_by(Stays_Week_Nights)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Stays_Week)
+```
+
+
+##### **Bed and Breakfast is the most common meal option.**
+```{r}
+#Count of Meals
+Meal <- hotel_bookings2%>%
+  group_by(Meal)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Meal)
+```
+
+
+##### **Non repeated guest tend to book stays more often than repeated guests.**
+```{r}
+#Count of Repeated_Guest
+Repeated_Guest <- hotel_bookings2%>%
+  group_by(Repeated_Guest)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Repeated_Guest)
+```
+
+
+##### **Transient customers book the most hotel stays..**
+```{r}
+#Count on Customer_Type
+Customer <- hotel_bookings2%>%
+  group_by(Customer_Type)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Customer)
+```
+
+
+##### **Zero and 1 special requests are made by the customer**
+```{r}
+#Count on Special_Requests
+Special_Requests <- hotel_bookings2%>%
+  group_by(Special_Requests)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Special_Requests)
+```
+
+
+##### **When combining the stays for weekend nights and week nights, the two days is the highest number of stays.**
+```{r}
+#Count on Stays_Total
+Stays_Total <- hotel_bookings2%>%
+  group_by(Stays_Total)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Stays_Total)
+```
+
+
+##### **The most common total cost in a hotel stay is $124 (assuming the currency is dollars)**
+```{r}
+#Count on Stays_Total_Cost
+Stays_Total_Cost <- hotel_bookings2%>%
+  group_by(Stays_Total_Cost)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Stays_Total_Cost)
+```
+
+
+### Data Analysis:
+
+
+##### Cancellations of hotel with Arrival Month
+_Cancellations in April is the highest._
+```{r}
+# Bar Plot 
+hotel_bookings2 %>% 
+ggplot(aes(x = Cancellation_Status, fill = Arrival_Month)) +
+  geom_bar()
+```
+
+
+##### Cancellations of hotel with arrival date year
+_The year 2016 had the most cancellations/non-cancellations._
+```{r}
+# Bar Plot 
+hotel_bookings2 %>% 
+ggplot(aes(x = Arrival_Year, fill = Cancellation_Status)) +
+  geom_bar()
+```
+
+
+##### What type of hotels do repeated guest book?
+_Repeated guests book City Hotels the most._
+```{r}
+# Bar Plot 
+hotel_bookings2 %>% 
+ggplot(aes(x = Repeated_Guest, fill = Hotel)) +
+  geom_bar()
+```
+
+
+##### What type of customers tend to be repeated guests?
+_Transient customers tend to be repeated guests._
+```{r}
+# Plot
+hotel_bookings2%>%
+  ggplot(aes(x = Repeated_Guest, fill = Customer_Type)) +
+  geom_bar()
+```
+
+
+##### Do repeated guests have a preferred meal choice?
+_Bed and Breakfast is the preferred meal of choice for repeated guest._
+```{r}
+# Plot
+hotel_bookings2%>%
+  ggplot(aes(x = Repeated_Guest, fill = Meal)) +
+  geom_bar()
+```
+
+
+##### Do guests have special requests?
+_Guests in general have no special requests during hotel stay._
+```{r}
+# Plot
+hotel_bookings2%>%
+  ggplot(aes(x = Special_Requests, fill = Repeated_Guest)) +
+  geom_bar()
+```
+
+
+##### How do total stays compare with total costs at hotels?
+_Whether it's a City or Resort hotel, majority of the booking stays are  between 0 to 20 days with a few outliers._
+```{r}
+#Scatter plot
+hotel_bookings2 %>% 
+ggplot(aes(x = Stays_Total, y = Stays_Total_Cost, color = Hotel)) +
+  geom_point() +
+  geom_smooth(formula = y ~ x, method=lm , color="red", se=FALSE) + # with linear trend
+  theme_ipsum()
+```
+
+
+***

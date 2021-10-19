@@ -1,0 +1,28 @@
+{
+    "Books": [
+        {
+            "Title": "The Talisman",
+            "Author": "Stephen King, Peter Straub",
+            "Type": "Paperback",
+            "Publisher": "Gallery Books",
+            "ISBN-13": "978-1501192272",
+            "Price": 13.50
+        },
+        {
+            "Title": "And Then There Were None",
+            "Author": "Agatha Christie",
+            "Type": "Mass Market Paperback",
+            "Publisher": "William Morrow",
+            "ISBN-13": "978-0062073488",
+            "Price": 7.99
+        },
+        {
+            "Title": "Night Shift",
+            "Author": "Stephen King",
+            "Type": "Mass Market Paperback",
+            "Publisher": "Anchor",
+            "ISBN-13": "978-0307743640",
+            "Price": 8.99
+        }
+    ]
+}

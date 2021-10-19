@@ -1,0 +1,236 @@
+---
+title: "Data 607 - Project 1"
+author: "Leticia Salazar"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+collaborators: Chinedu Onyeka and Tyler Baker
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#Install packages
+#install.packages("tidyverse")
+```
+
+
+#### Project 1
+
+#### In this project, you're given a text file with chess tournament results where the information has some structure. Your job is to create an R Markdown file that generates a .csv file (that could for example be imported into a SQL database) with the following information for all of the players:
+
+* Player's Name
+* Player's State
+* Total Number of Points 
+* Player's Pre-Rating
+* Average Pre Chess Rating of Opponents
+
+##### For the first player, the information would be: Gary Hua, ON, 6.0, 1794, 1605
+
+##### 1605 was calculated by using the pre-tournament opponent's ratings of 1436, 1536, 1600, 1610, 1649, 1663, 1716, and dividing by the total number of games played. 
+
+##### **Objectives:** From the cross-tables, choose only the player's opponents and averge pre-rating of their opponents, both for players who played all of the scheduled games (8 points), and for players who had one or more unplayed games (e.g. byes, forfeits) (5 points). Are the average ratings presented to nearest full-point accuracy? (2 points)
+
+##### Using the provided ELO calculation, determine each player's expected results (number of points), based on his or her pre-tournament rating, and the average pre-tournament rating for all of the player's opponents. Which player scored the most points relative to his or her expected results? (3 extra-credit points)
+
+***
+
+```{r}
+#Load libraries
+library(tidyverse)
+library(stringr)
+library(dplyr)
+```
+
+#### Loading Dataset
+```{r}
+#Load the dataset
+
+theUrl <- "https://raw.githubusercontent.com/letisalba/Data-607-Project1/main/tournament.txt"
+
+tournament <- read.delim(file = theUrl, header = FALSE, sep = "|", skip = 3) #Separating by "|" and skipping the first 3 rows
+
+head(tournament)
+```
+
+```{r}
+#Get a glimpse of the dataset
+#Note that there's plenty of dashes and NA's which will be removed
+glimpse(tournament)
+```
+
+
+#### Data Wrangling
+```{r}
+#Removing dashes
+tournament2 <- tournament[!grepl("---", tournament[ ,1]), ]
+head(tournament2)
+```
+
+#### Odd Rows Cleansing
+```{r}
+#For one player there is two rows that split between Player's name, points and rounds while the second row contains Player's state and pre/post ratings along with other information in regards to the rounds
+#Start by splitting dataset into odd and even rows to be able to clean them individually
+
+#Split dataset into odd row only
+
+odd_rows <- tournament2[seq(1, nrow(tournament2), 2), ]
+
+#Removing columns not needed in odd_rows
+odd_rows <- odd_rows[, -c(1, 11)]
+
+#Add column ID named Player Numbers
+#This is going to help merge the two datasets later on
+odd_rows$Player_Number <- seq(1, 64, length.out = dim(odd_rows)[1])
+
+
+
+head(odd_rows)
+```
+
+```{r}
+#Create new column names for even_rows dataset and rename
+colnames(odd_rows) <- c("Player_Name", "Points", "Opp_1", "Opp_2", "Opp_3", "Opp_4", "Opp_5", "Opp_6", "Opp_7", "Player_Number")
+
+#Reorder columns in 'odd_rows' to place Player_Number before Player_Name
+odd_rows2 <- odd_rows[c("Player_Number", "Player_Name", "Points", "Opp_1", "Opp_2", "Opp_3", "Opp_4", "Opp_5", "Opp_6", "Opp_7")]
+head(odd_rows2)
+```
+
+#### Even Rows Cleansing
+```{r}
+#Split dataset into even rows only
+even_rows <- tournament2[seq(2, nrow(tournament2), 2), ]
+#Remove columns not needed
+even_rows <- even_rows[, -c(3:11)]
+
+# Add column ID to match Player Numbers
+# This is going to help merge the two datasets later on
+even_rows$Player_Number <- seq(1, 64, length.out = dim(even_rows)[1])
+
+head(even_rows)
+```
+
+
+```{r}
+# Create new column names for even_rows dataset and rename
+colnames(even_rows) <- c("State", "Ratings_Pre/Post", "Player_Number")
+
+# Reorder columns in even_rows so that Player_Number is before State
+even_rows2 <- even_rows[c("Player_Number", "State","Ratings_Pre/Post")]
+head(even_rows2)
+```
+
+
+```{r}
+#Join odd_rows and even_rows datasets by "Player_Number" to form one table
+tournament_subset <- left_join(odd_rows, even_rows2, by = "Player_Number")
+
+#Reorder columns 
+tournament_subset2 <- tournament_subset[c("Player_Number", "Player_Name", "State", "Points", "Ratings_Pre/Post", "Opp_1", "Opp_2", "Opp_3", "Opp_4", "Opp_5", "Opp_6", "Opp_7")]
+head(tournament_subset2)
+```
+
+
+#### Cleansing Ratings_Pre/Post column
+```{r}
+# Spliting Ratings_Pre/Post to get Pre and Post ratings alone
+split_ratings <- str_split_fixed(even_rows2$`Ratings_Pre/Post`, "-", 2)
+colnames(split_ratings) <- c("Pre-Rating", "Post-Rating")
+
+#Remove numbers before "R:"
+PreRating <- unlist(str_remove_all(split_ratings, "\\d+\\d [/]"))
+
+#Extract Player's Pre-Ratings
+PreRating <- unlist(str_extract_all(split_ratings, "R: \\d+\\d"))
+
+#Remove "R:"
+PreRating2 <- unlist(str_remove_all(PreRating, "R:"))
+
+#Make values as.numeric
+PreRatings <- as.numeric(PreRating2)
+PreRatings
+```
+
+
+```{r}
+#Define new values
+New_PreRatings = c("1794", "1553", "1384", "1716"," 1655", "1686", "1649", "1641", "1411", "1365", "1712", "1663", "1666", "1610", "1220", "1604", "1629", "1600", "1564", "1595", "1563", "1555", "1363", "1229", "1745", "1579", "1552", "1507", "1602", "1522", "1494", "1441", "1449", "1399", "1438", "1355", "980", "1423", "1436", "1348", "1403", "1332", "1283", "1199", "1242", "377", "1362", "1382", "1291", "1056", "1011", "935", "1393", "1270", "1186", "1153", "1092",  "917",  "853",  "967", "955", "1530", "1175", "1163")
+
+#cbind tables together with tournament_subset2
+tournament_subset3 <-  cbind(tournament_subset2, New_PreRatings)
+
+head(tournament_subset3)
+```
+
+```{r}
+#Remove Ratings_Pre/Post Column
+tournament_subset4 <- tournament_subset3[, -c(5)]
+
+#Reorder column names so that New_PreRatings comes after Points and print new dataset
+tournament_subset5 <- tournament_subset4[c("Player_Number", "Player_Name", "State", "Points", "New_PreRatings", "Opp_1", "Opp_2", "Opp_3", "Opp_4", "Opp_5", "Opp_6", "Opp_7")]
+head(tournament_subset5)
+```
+
+
+#### Cleansing Opponents columns 1 - 7 
+```{r}
+#Start extracting Opponents columns into matrix to remove W, L, D from the Player Numbers
+opponents <- tournament_subset5[6:12]
+Opps <- matrix(str_extract(unlist(opponents), "\\d+"), ncol = 7)
+head(Opps)
+```
+
+
+```{r}
+#Name New Columns
+opponents_col <- c("Opp1", "Opp2", "Opp3", "Opp4", "Opp5", "Opp6", "Opp7")
+
+#Set as a dataframe and call in columns
+Opps_df <- as.data.frame(Opps)
+colnames(Opps_df) <- opponents_col
+
+#Replace all NA's with 0
+Opps_df[is.na(Opps_df)] <- 0
+
+head(Opps_df)
+```
+
+
+```{r}
+#cbind Opps_df together with tournament_subset5
+tournament_subset6 <-  cbind(tournament_subset5, Opps_df)
+
+#Remove columns 6 to 12 from tournament _subset6
+tournament_subset7 <- tournament_subset6[, -c(6:12)]
+head(tournament_subset7)
+```
+
+
+#### Computing Opponents Averages
+```{r}
+#Calculate Opponents Averages with a For Loop 
+for(i in 1:nrow(tournament_subset7)){
+  tournament_subset7$Opp_Avg_Ratings[i] <- round(mean(PreRatings[as.numeric(Opps_df[i,])], na.rm = TRUE))
+}
+
+head(tournament_subset7)
+```
+
+```{r}
+#Remove columns 6 to 12 from tournament _subset7
+chess_tournament <- tournament_subset7[, -c(6:12)]
+
+#Print final dataset
+head(chess_tournament, n = 6)
+```
+
+#### Write .CSV File
+```{r}
+#Write .csv file
+write.csv(chess_tournament, file = "chess_tournament.csv")
+```
+
+
+
+

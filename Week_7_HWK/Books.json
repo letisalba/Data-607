@@ -1,0 +1,44 @@
+{
+    "Title": [
+    {
+        "Book 1": "The Talisman",
+        "Book 2": "And Then There Were None",
+        "Book 3": "Night Shift"
+    }
+    ],
+    "Authors": [
+    {
+        "Book 1": "Stephen King, Peter Straub",
+        "Book 2": "Agatha Christine",
+        "Book 3": "Stephen King"
+    }
+    ],
+    "Type": [
+    {
+        "Book 1": "Paperback",
+        "Book 2": "Mass Market Paperback",
+        "Book 3": "Mass Market Paperback"
+    }
+    ],
+    "Publisher": [
+    {
+        "Book 1": "Gallery Books",
+        "Book 2": "William Morrow",
+        "Book 3": "Anchor"
+    }
+    ],
+    "ISBN-13": [
+    {
+        "Book 1": "978-1501192272",
+        "Book 2": "978-0062073488",
+        "Book 3": "978-0307743640"
+    }
+    ],
+    "Price": [
+    {
+        "Book 1": "13.50",
+        "Book 2": "7.99",
+        "Book 3": "8.99"
+    }
+    ]
+ }

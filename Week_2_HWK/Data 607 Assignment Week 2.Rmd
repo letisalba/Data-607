@@ -1,0 +1,82 @@
+---
+title: "Data 607 Assignment Week 2"
+author: "Leticia Salazar"
+date: "9/5/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##### Assignment - SQL and R
+
+##### Choose six recent popular movies. Ask at least five people that you know (friends, family, classmates, imaginary friends if necessary) to rate each of these movies that they have seen on a scale of 1 to 5. Take the results (observations) and store them in a SQL database of your choosing. Load the information from the SQL database into an R dataframe.
+
+
+##### For this assignment I used google forms [https://forms.gle/oWoD8iMbheFF69rd9] to conduct my survey. I asked my friends to rate the following movies:
+* LA LA LAND [2016]
+* COCO [2017]
+* BIRD BOX [2018]
+* AVENGERS: ENDGAME [2019]
+* WONDER WOMAN 1984 [2020]
+* TOM AND JERRY [2021]
+
+##### For each movie I asked them to rate them using the following scale:
+* 0 - Never seen it
+* 1 - Poor
+* 2 - Fair
+* 3 - OK/Good
+* 4 - Very Good 
+* 5 - Excellent
+
+```{r}
+# Install package
+#install.packages("RPostgreSQL")
+require("RPostgreSQL")
+```
+
+
+```{r}
+#Start creating connection with PostgreSQL
+movie_ratings<-dbConnect(dbDriver("PostgreSQL"), dbname="Movie_Ratingsdb", host="localhost", port=5433, user="postgres", password="PaSsWoRd!1286")
+```
+
+```{r}
+#Get the tables from connection
+dbListTables(movie_ratings);
+```
+
+##### Show first table for movie ratings responses
+```{sql connection = movie_ratings}
+select * from public.movie_ratings
+```
+
+##### Show second table for average movie ratings along with rotten tomatoes score and audience score.
+```{sql connection = movie_ratings}
+select * from public.movie_ratings2
+```
+
+
+```{r}
+dbDisconnect(movie_ratings)
+```
+
+##### Conclusion: When conducting this short survey one issue that came up was that not all of my friends had seen the movies I selected. This was something I expected and why I chose to add the rating of "0" - never seen it. By doing so, the movie ratings wouldn't all appear as "1" - Poor when in reality the participants do not know what the movie is about. In terms of the ratings, "COCO" was one of the movies enjoyed by everyone and rated "5"" all throughout followed by Avengers: Endgame with an average rating of "3.8". I was able to get ratings from Rotten Tomatoes {https://www.rottentomatoes.com/}, their audience scores and created movie_ratings2 in postgresql to compare the averages from my friends alongside theirs. Based on Rotten Tomatoes, the most highly rated movie was "La La Land" but the audience score rated "Avengers: Endgame" and "COCO" higher. 
+
+
+
+When I received the responses for my survey, google forms created charts for two additional questions I created:
+
+![Most Favorite Movie](/Users/letiix3/Desktop/R4DS-main/Data 607/Week_2_HWK/Most_Favorite_Movie.png)
+
+![Least Favorite Movie](/Users/letiix3/Desktop/R4DS-main/Data 607/Week_2_HWK/Least_Favorite_Movie.png)
+
+
+
+
+
+
+

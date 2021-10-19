@@ -1,0 +1,58 @@
+--Drop Table if Exist
+DROP TABLE IF EXISTS movie_ratings;
+
+--Create Table
+CREATE TABLE movie_ratings (
+	ID INT PRIMARY KEY,
+	PARTICIPANTS VARCHAR(30),
+	LA_LA_LAND INT,
+	COCO INT,
+	BIRD_BOX INT,
+	AVENGERS_ENDGAME INT,
+	WONDER_WOMAN_1984 INT,
+	TOM_AND_JERRY INT 
+);
+
+--Insert values into table
+INSERT INTO movie_ratings VALUES (1,'SG',0,5,3,5,3,0);
+INSERT INTO movie_ratings VALUES (2,'GF',3,5,0,0,0,0);
+INSERT INTO movie_ratings VALUES (3,'CC',2,5,2,4,0,5);
+INSERT INTO movie_ratings VALUES (4,'KP',1,5,3,5,2,1);
+INSERT INTO movie_ratings VALUES (5,'BO',0,5,1,5,4,5);
+
+--Show table
+SELECT * FROM movie_ratings 
+
+--Calculate averages for all movie ratings
+SELECT AVG(LA_LA_LAND) FROM movie_ratings;
+SELECT AVG(COCO) FROM movie_ratings;
+SELECT AVG(BIRD_BOX) FROM movie_ratings;
+SELECT AVG(AVENGERS_ENDGAME) FROM movie_ratings;
+SELECT AVG(WONDER_WOMAN_1984) FROM movie_ratings;
+SELECT AVG(TOM_AND_JERRY) FROM movie_ratings;
+
+--Show table
+SELECT * FROM movie_ratings 
+
+--Drop Table if Exist
+DROP TABLE IF EXISTS movie_ratings2;
+
+--Create new movie rating table
+CREATE TABLE movie_ratings2 (
+	Movie_ID INT PRIMARY KEY,
+	Movie_Name VARCHAR(20),
+	AVG_RATING INT,
+	TOMATOMETER INT,
+	AUDICENCE_SCORE INT 
+);
+
+--Insert values into new table
+INSERT INTO movie_ratings2 VALUES (1,'LA_LA_LAND', 1.2, 8.7, 4.1);
+INSERT INTO movie_ratings2 VALUES (2,'COCO', 5,	8.3, 4.5);
+INSERT INTO movie_ratings2 VALUES (3,'BIRD_BOX', 1.8, 5.8, 3.3);
+INSERT INTO movie_ratings2 VALUES (4,'AVENGERS_ENDGAME', 3.8, 8.2, 4.5);
+INSERT INTO movie_ratings2 VALUES (5,'WONDER_WOMAN_1984', 1.8, 6, 3.9);
+INSERT INTO movie_ratings2 VALUES (6,'TOM_AND_JERRY', 2.2, 4.7, 4.2);
+
+--Show new table
+SELECT * FROM movie_ratings2 

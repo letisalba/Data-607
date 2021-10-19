@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<Books>
+   <book id="1">
+        <Title>The Talisman</Title>
+        <Authors>Stephen King, Peter Straub</Authors>
+        <Type>Paperback</Type>
+        <Publisher>Gallery Books</Publisher>
+        <ISBN-13>978-1501192272</ISBN-13>
+        <Price>13.50</Price>
+   </book>
+   <book id="2">
+        <Title>And Then There Were None</Title>
+        <Authors>Agatha Christie</Authors>
+        <Type>Mass Market Paperback</Type>
+        <Publisher>William Morrow</Publisher>
+        <ISBN-13>978-0062073488</ISBN-13>
+        <Price>7.99</Price>
+   </book>
+   <book id="3">
+        <Title>Night Shift</Title>
+        <Authors>Stephen King</Authors>
+        <Type>Mass Market Paperback</Type>
+        <Publisher>Anchor</Publisher>
+        <ISBN-13>978-0307743640</ISBN-13>
+        <Price>8.99</Price>
+   </book>
+</Books>

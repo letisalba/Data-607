@@ -1,0 +1,219 @@
+---
+title: "Data 607 Assignment 5"
+author: "Leticia Salazar"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Assignment – Tidying and Transforming Vaccination Data
+
+![](/Users/letiix3/Desktop/R4DS-main/Data 607/Week_5_HWK/Assignment_5_Hwk.png)
+
+
+#### The chart above describes August 2021 data for Israeli hospitalization (“Severe Cases”) rates for people under 50 (assume “50 and under”) and over 50, for both un-vaccinated and fully vaccinated populations. Analyze the data, and try to answer the questions posed in the spreadsheet. You’ll need some high level domain knowledge around (1) Israel’s total population, (2) Who is eligible to receive vaccinations, and (3) What does it mean to be fully vaccinated? Please note any apparent discrepancies that you observe in your analysis.
+
+* _(1) Create a .CSV file (or optionally, a relational database!) that includes all the information above.
+You’re encouraged to use a “wide” structure similar to how the information appears above, so
+that you can practice tidying and transformations as described below._
+
+* _(2) Read the information from your .CSV file into R, and use tidyr and dplyr as needed to tidy
+and transform your data._
+
+* _(3) Perform analysis as described in the spreadsheet and above._
+
+* _(4) Your code should be in an R Markdown file, posted to rpubs.com, and should include narrative
+descriptions of your data cleanup work, analysis, and conclusions. Please include in your
+homework submission:_
+  * _The URL to the .Rmd file in your GitHub repository. and_
+  * _The URL for your rpubs.com web page._
+
+```{r}
+#Import libraries
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(stringr)
+```
+
+
+```{r}
+#Load the .csv file
+theUrl <- "https://raw.githubusercontent.com/letisalba/Data607_Assignment_Week5/main/Israel_Vax_Data.csv"
+
+israel_vax <- read.csv(file = theUrl, header = TRUE, sep = ",", na = ".", skip = "1")
+head(israel_vax)
+```
+
+```{r}
+glimpse(israel_vax)
+```
+
+
+##### Tidy Data
+
+_The goal when tidying this data set is to clean the rows into categories of not vaccinated vs fully vaccinated. By doing so I will be able to then combine the appropriate rows to create new columns to get the age, vaccination status, population, percent of population, and severe cases within each category._
+
+```{r}
+#Get columns names
+colnames(israel_vax) <- c("X1", "X2", "X3", "X4", "X5", "X6")
+israel_vax
+```
+
+
+```{r}
+#Add ID column 1 to 4 before column X1
+israel_vax2 <- israel_vax %>% 
+  add_column(X0 = 1:4, .before = "X1")
+israel_vax2
+```
+
+
+```{r}
+#Extract all Percentages
+percent_pop <- unlist(str_extract_all(israel_vax2, "\\d+(\\.\\d+){0,1}%"))
+
+#Separate using ","
+paste( unlist(percent_pop), collapse = ',')
+
+#Create df
+percent_pop <- data.frame(matrix(unlist(percent_pop), nrow=length(percent_pop), byrow=TRUE),stringsAsFactors=FALSE)
+percent_pop
+```
+
+
+```{r}
+#Rename column
+colnames(percent_pop) <- c("Percent_from_Pop")
+
+#Add column ID
+percent_pop <- percent_pop %>% 
+  add_column(ID = 1:4, .before = "Percent_from_Pop")
+percent_pop
+```
+
+
+```{r}
+
+#Arrange Percentage from Population
+percent_pop2 <- percent_pop %>% 
+  arrange(factor(Percent_from_Pop, levels = c("23.30%", "73.00%", "7.9%", "90.4%")))
+
+#Create new column and identify the values
+x <- c("1,116,834", "3,501,118", "186,078", "2,133,516")
+percent_pop2 <- percent_pop2 %>% 
+  add_column(Population = x, .before = "Percent_from_Pop")
+percent_pop2
+```
+
+
+```{r}
+#Extract all severe cases numbers
+Severe_Cases <- unlist(str_extract_all(israel_vax2, "[:digit:]{2,3}")) #This regex didn't work out too well because it took out additional numbers that fell into this category leading to extra steps below
+Severe_Cases
+
+#Convert into df
+severe_cases <- data.frame(matrix(unlist(Severe_Cases), nrow=length(Severe_Cases), byrow=TRUE),stringsAsFactors=FALSE)
+
+#Add a new column ID
+severe_cases2 <- severe_cases %>% 
+  add_column(ID = 1:21, .before = "matrix.unlist.Severe_Cases...nrow...length.Severe_Cases...byrow...TRUE.")
+
+#Deop columns not needed
+severe_cases3 <- severe_cases2[-c(1:17),] 
+severe_cases3
+
+#Create column names for new df
+colnames(severe_cases3) <- c("ID2","Severe Cases")
+
+severe_cases3
+```
+
+
+```{r}
+#cbind tables 
+vaccination_israel <-  cbind(israel_vax2, percent_pop2, severe_cases3)
+#Drop rows not needed in df
+vaccination_israel <- vaccination_israel[, -c(1, 3:8, 11)]
+
+#Assign column names
+colnames(vaccination_israel) <- c("Age","Population" ,"Percent_from_Pop", "Severe Cases")
+
+vaccination_israel
+```
+
+
+```{r}
+#Assign value order within columns and replace the new columns[df severe_values] from the old columns [df vaccination_israel]
+
+#Assign values
+value <- c("43", "11", "171", "290")
+values2 <- c("Not Vax", "Fully Vax", "Not Vax", "Fully Vax")
+
+#Add new columns
+severe_values <- vaccination_israel %>% 
+  add_column(Severe_Cases = value, Vaccination_Status = values2)
+
+#Drop column 4
+severe_values <- severe_values[, -c(4)]
+severe_values
+
+```
+
+
+```{r}
+#Reorder columns
+col_order <- c("Age", "Vaccination_Status", "Population",
+               "Percent_from_Pop", "Severe_Cases")
+vax_israel <- severe_values[, col_order]
+vax_israel
+```
+
+
+#### To answer the questions:
+
+* 1. Do you have enough information to calculate the total population? What does this total population represent?
+
+_Basing from this data, we do not have enough information to calculate the total population of Israel. The data is only representing a group [severe cases] of people above and below the age of 50 but we do not know if this is an actual representation of the total population who are or not fully vaccinated. It also comes to mind, what the definition of fully vaccinated means (in Israel's (1 or 2 doses needed). There can be estimated calculations to find the total population but since it is estimates it won't be accurate._
+
+* 2. Calculate the Efficacy vs. Disease; Explain your results.
+
+Efficacy vs. severe disease = 1 - (% fully vaxed severe cases per 100K / % not vaxed severe cases per 100K)
+
+_Efficacy vs. severe disease for under fifty = 0.7441 or 74.41%_
+_Efficacy vs. severe disease for over fifty = -0.696 or -69.60%_
+
+_Basing on these results the efficacy for those under the age of fifty is much higher than at preventing a severe disease than those in the over the age of fifty group._
+
+```{r}
+#Under Fifty
+not_vax <- (43 / 1000)
+vax <- (11 / 1000)
+
+ESD_under_fifty <- 1 - (vax / not_vax)
+ESD_under_fifty
+
+
+#Over Fifty
+not_vax2 <- (171 / 1000)
+vax2 <- (290 / 1000)
+
+
+ESD_over_fifty <- 1 - (vax2 / not_vax2)
+ESD_over_fifty
+```
+
+
+* 3. From your calculation of efficacy vs. disease, are you able to compare the rate of severe cases in unvaccinated individuals to that in vaccinated individuals?
+
+_For those who are over the age of fifty, whether they are vaccinated or not, they run into a higher risk for diseases than those under the age of fifty. This can be due to any underlying condition(s) the older individuals may have. Not surprised to see this since it is known that the older a person gets the more health issues they can suffer from. As opposed to a younger person who may or may not be in a better health state._
+
+
+
+#### Conclusion:
+_Overall, being of older age does compromise health regardless of vaccination status. Chances are, we don't really know how much a person's vaccination status and severe diseases affect a person's body nor how quickly it recuperates. We do know being vaccinated does play a part and it would be great to have more information about the whole population and their percentages in vaccinations to see if there's a correlation._
