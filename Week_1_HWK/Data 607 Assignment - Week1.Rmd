@@ -1,0 +1,210 @@
+---
+title: "Data 607 Assignment Week 1"
+author: "Leticia Salazar"
+date: "8/27/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##### __Assignment Week 1:__ Do Americans Approve or Disapprove the President's Response to COVID-19?
+
+##### Below you'll find a dataset from fivethirtyeight.com titled "How Americans View Biden's Response To The Coronavirus Crisis" [https://projects.fivethirtyeight.com/coronavirus-polls/]. Within the dataset there were a couple of csv files where I chose to look into two called covid_approval_polls.csv and covid_approval_polls_adjusted.csv. Both of these files look into American's approval or disapproval of the way the US President is or has handled COVID-19, as well as a poll after adjustments were applied through a poll-averaging algorithm.
+
+##### Explaination of columns in these datasets
+* subject: this column marks whose handling of COVID-19 the approval poll is about
+  
+* party: party of respondents
+  * __R__
+  * __D__ 
+  * __I__ 
+  * __ALL__
+
+* startdate: start date of poll
+
+* enddate: end date of poll
+
+* pollster: organization that conducted the poll
+
+* sponsor: organization that sponsored the poll
+
+* samplesize: size of polling sample
+
+* population:
+  * __A__ for adults
+  * __RV__ for registered voters
+  * __LV__ for likely voters
+
+* tracking: **True** if the poll is a tracking poll, meaning that the pollster is releasing data with overlapping samples
+
+* text: text of the question the pollster asked
+
+* url: link to the poll
+
+* modeldate: date of model run
+
+* grade: grade given to the pollster(website below)
+  * https://projects.fivethirtyeight.com/pollster-ratings/
+ 
+* weight: weight given to each poll in the model
+
+* multiversions: __*__ denotes that multiple versions of a poll in the raw data file were combined
+
+
+#### Loading the datasets and using the summary function to gain an overview of the datasets
+```{r cars}
+# Load the datasets
+
+#theURL <- "https://raw.githubusercontent.com/fivethirtyeight/covid-19-polls/master/covid_approval_polls.csv"
+#theURL2 <- "https://raw.githubusercontent.com/letisalba/Data607-Assignment-Week1/main/covid_approval_polls_adjusted.csv"
+
+#approvaldf <- read.csv(file = theURL , header = TRUE , sep = ",",  na = ".")
+#approval_adjusted <- read.csv(file = theURL2, header = TRUE, sep = ",",  na = ".")
+
+#head(approvaldf)
+#head(approval_adjusted)
+
+
+# Load the datasets from my GitHub
+
+theURL <- "https://raw.githubusercontent.com/letisalba/Data607-Assignment-Week1/main/covid_approval_polls.csv"
+theURL2 <- "https://raw.githubusercontent.com/letisalba/Data607-Assignment-Week1/main/covid_approval_polls_adjusted.csv"
+
+approval <- read.csv(file = theURL , header = TRUE , sep = ",",  na = ".")
+approval_adjusted <- read.csv(file = theURL2, header = TRUE, sep = ",",  na = ".")
+
+head(approval)
+head(approval_adjusted)
+```
+
+
+#### Data Exploration
+```{r}
+# Print Summary for both datasets
+summary(approval)
+summary(approval_adjusted)
+```
+
+
+```{r}
+# Get column names for both data sets
+colnames(approval, do.NULL = TRUE, prefix = "col")
+colnames(approval_adjusted, do.NULL = TRUE, prefix = "col")
+```
+
+
+```{r}
+# Print Mean and Median for selected columns of both data sets
+means <- sapply(approval[, c("approve", "disapprove")], mean)
+medians <- sapply(approval[, c("approve", "disapprove")], median)
+
+means_medianDF <- data.frame(means, medians)
+means_medianDF
+
+means2 <- sapply(approval_adjusted[, c("weight", "influence", "tracking", "approve_adjusted", "disapprove_adjusted")], mean)
+medians2 <- sapply(approval_adjusted[, c("weight", "influence", "tracking", "approve_adjusted", "disapprove_adjusted")], median)
+
+
+means_medianDF2 <- data.frame(means2, medians2)
+means_medianDF2
+```
+
+
+```{r}
+# Number of missing values in both data sets
+colSums(is.na(approval))
+colSums(is.na(approval_adjusted))
+```
+
+
+#### Data Wrangling
+```{r}
+# Create a new data frame with a subset of columns and rows for both data sets
+
+approval_subset <- approval[, c("start_date", "end_date", "pollster", "sponsor", "sample_size", "population", "party", "approve", "disapprove")]
+head(approval_subset)
+
+approval_adjusted_subset <- approval_adjusted[, c("subject", "party", "grade", "samplesize", "population", "weight", "influence", "approve_adjusted", "disapprove_adjusted")]
+head(approval_adjusted_subset)
+```
+
+
+
+```{r}
+# Create new column names for both data sets to create a new data frame
+colnames(approval_subset) <- c("Start Date", "End Date", "Pollster", "Sponsor", "Sample Size", "Population", "Party", "Approve", "Disapprove")
+colnames(approval_subset)
+
+colnames(approval_adjusted_subset) <- c("Subject", "Party_subset", "Grade", "Sample_Size", "Population_subset", "Weight", "Influence", "Approve_Adjusted", "Disapprove_Adjusted" )
+colnames(approval_adjusted_subset)
+```
+
+
+
+```{r}
+# Print subset table to see new changes
+head(approval_subset)
+head(approval_adjusted_subset)
+```
+
+
+```{r}
+# Number of missing values in both data sets subsets
+colSums(is.na(approval_subset))
+colSums(is.na(approval_adjusted_subset))
+```
+
+
+#### Graphics
+```{r}
+# Histogram for approval ratings for COVID-19 presidential response
+hist(approval_subset$Approve, main = "Approval Ratings for Presidents' Response to COVID-19", xlab = "Approve")
+```
+
+
+```{r}
+# Histogram for adjusted approval ratings for COVID-19 presidential response
+hist(approval_adjusted_subset$Approve_Adjusted, main = "Adjusted Approval Ratings for Presidents' Response to COVID-19", xlab = "Approve Adjusted")
+```
+
+```{r}
+# Histogram for disapproved ratings to COVID-19 presidental response
+hist(approval_subset$Disapprove, main = "Disapproval Ratings for Presidents' Response to COVID-19", xlab = "Disapprove")
+```
+
+
+```{r}
+# Histogram for adjusted disapproval ratings to COVID-19 presidential response
+hist(approval_adjusted_subset$Disapprove_Adjusted, main = "Adjusted Disapproval Ratings for Presidents' Response to COVID-19", xlab = "Disapprove Adjusted")
+```
+
+
+```{r}
+# Grouped Bar graph comparing population and party from first data set
+counts <- table(approval_subset$Population, approval_subset$Party)
+barplot(counts, main="Population and Party Comparisson",
+  xlab="Party", col=c("yellow", "red", "blue", "green"), legend = rownames(counts), beside=TRUE)
+```
+
+
+```{r}
+# Grouped Bar graph comparing adjusted population and party
+counts <- table(approval_adjusted_subset$Population_subset, approval_adjusted_subset$Party_subset)
+barplot(counts, main="Adjusted Population and Party Comparisson",
+  xlab="Party Subset", col=c("yellow", "red", "blue", "green"), legend = rownames(counts), beside=TRUE)
+```
+
+
+```{r}
+# Grouped Bar graph comparing adjusted grade and party 
+counts <- table(approval_adjusted_subset$Grade, approval_adjusted_subset$Party_subset)
+barplot(counts, main="Adjusted Grade and Party Comparisson",
+  xlab="Party Subset", col=c("yellow", "red", "blue", "green", "orange", "pink", "purple", "lightblue", "gray", "magenta", "maroon", "violet"), legend = rownames(counts), beside=TRUE)
+```
+
+
+#### Conlcusion: After doing a minor analysis of these two data sets, I noticed minor changes from the original dataset to the adjusted one. For instance, with the "approve" ratings and "approve adjusted", there's a decrease in the count from 600 to 500, while the "disapprove" ratings and "disapprove adjusted" were kept the same. When comparing the "population" and "party" from the first dataset with the "population adjusted" and "party" adjusted datasets I found one discrepency, "v", which was not included in the original github description. The only ones accounted for are "adults", "registered voters" and "likely voters; regardless, there was only 1 "v" in both datasets,  assuming it's an outlier. In both graphs all the people who were surveyed were classified as "adults" with the least people classified as "likely voters". Out of the "adults" plenty of them didn't fall under a particular political party and instead fell under "all". Finally, when looking into the adjusted dataset, I looked to compare grades given and the party. In all parties, the highest ranking grade given was a "B+", followed by "B" and "B/C". The lowest ranking grade was "C/D" and "A/B". 
+
+#### Moving forward I'd update a couple of things such as, joining both datasets to have a better understanding of the data collected. Getting rid of n/a and missing cell values, especially when trying to calculate the mean and median for "approve", "disapprove", "approve adjusted" and "disapprove adjusted". Lastly I'd work with ggplot2 to create more interactive charts to analyze the data further.
