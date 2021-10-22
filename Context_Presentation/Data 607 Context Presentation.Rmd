@@ -1,30 +1,232 @@
 ---
 title: "Data 607 Context Presentation"
 author: "Leticia Salazar"
-date: "10/18/2021"
-output: html_document
+date: "`r Sys.Date()`"
+output: rmdformats::html_clean
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+### GitHub Shortcuts on Terminal and Command Prompt
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#### SSH Key:
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+#### By generating SSH keys it allows developers to work remotely with services and transfer information without having to open a new window and type out login information. 
 
-```{r cars}
-summary(cars)
-```
+#### SSH Keys can be set up in GitHub to facilitate uploading files and updating your repos, especially when working in groups.It will help you push your code through your Terminal for Mac users or your Command Prompt for Windows users.
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+#### Steps to set up your SSH Key(s):
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+#### 1. Sign up for a [GitHub](https://github.com) account.
+#### 2. Open up your Terminal (Command Prompt)
+#### 3. Before setting up your SSH key, make sure you do not have a key set up in your system by typing: 
+
+>  `ls -al ~/.ssh`
+
+#### If no key, move to step 4, otherwise check that none of the keys are listed under id_rsa, see image below:
+
+![id.rsa](/Users/letiix3/Desktop/id.rsa_check.png)
+
+#### If you do find keys with a matching name you can overwrite them by following the steps below. If you do decide to stay with the same keys be aware that you will have to remember the password connected to your key. 
+
+#### 4. Type the following along with your email to generate your keys:
+
+> `ssh-keygen -t rsa -b 4096 -C "yourgithubemail@email.com`
+
+
+#### 5. You will be asked to enter a file to save the key, just hit the *Return/Enter* key.
+####      * Enter a password for your key {you can opt for not adding a password but your key will not be encrypted.}
+
+#### 6. Your window should look like this:
+
+![SSH Key](/Users/letiix3/Desktop/ssh-key.png)
+
+#### 7. Now we test whether the SSH agent is working on your machine, run the following command in your Terminal/Command Prompt:
+
+> `eval "$(ssh-agent -s)`
+
+#### * Your Terminal/Command Prompt must look like this:
+    
+         ![Agent pid]()
+    
+#### 8. Next, run the following command:
+
+> `ssh-add ~/.ssh/id_rsa`
+
+#### 9. Enter the password associated with the SSH key and if you have forgotten your password go back to step 4 to create a new one.
+
+#### For the next steps please make sure to have logged into your [GitHub](https://github.com/) account.
+
+#### 10. We will add the key to GitHub but first enter the following command to copy the key to your clipboard:
+
+> `pbcopy < ~/.ssh/id_rsa.pub`
+
+#### * For Windows users use this command:
+
+> `clip < ~/.ssh/id_rsa.pub`
+
+##### * Note: no message should appear, if there is please reenter the command once more. 
+
+#### 11. Once the key has been copied go to your setting options click on [SSH and GPG Keys](https://github.com/settings/keys). Click on "New SSH Key".
+
+![New SSH Keys](/Users/letiix3/Desktop/new_sshkeys.png)
+
+#### 12. You will then see a form where you can enter a name for your working computer and paste the key. Once you are done click on "Add SSH Key". See image below:
+
+![Add New SSH Keys](/Users/letiix3/Desktop/add_new_sshkeys.png)
+
+#### 13. Finally we add GitHub to your computer's list of acceptable SSH hosts by entering the following command on your Terminal/Command Prompt:
+
+> `ssh -T git@github.com`
+
+
+     #### You should see the following message:
+   
+ ![Successful](/Users/letiix3/Desktop/successful_sshkey.png)
+
+#### Additional steps to use github remotely through your Terminal / Command Prompt
+
+##### Git associates a username / email with any commit you make. For that there's two simple steps you can do using the `git config` command. 
+
+
+##### Setting your Git username for your repositories on your computer
+
+#### Open your Terminal / Command Prompt
+
+#### Set a Git username:
+
+> `git config --global user.name "Jane Doe"`
+
+
+#### Confirm that you have set the Git username correctly:
+
+> `git config --global user.name`
+
+> `Jane Doe`
+
+##### Setting your email address for your respositories on your computer
+
+#### Open your Terminal / Command Prompt
+
+#### Set an email address in Git [You can use any email address]:
+
+> `git config --global user.email "youremail@email.com"`
+
+
+#### Confirm that you have set the Git username correctly:
+
+> `git config --global user.email`
+
+> `youremail@email.com`
+
+
+***
+
+### Simple Operations in Terminal / Command Prompt
+
+* `cd` changes directory
+* `cd ~` changes to home directory
+* `cd ..` moves up one directory
+* `ls` lists files in folder
+* `pwd` shows currenty directory
+* `mkdir <FOLDERNAME>` creates new directory
+* `touch <FILENAME>` creates a file
+* `open .` opens the current folder for Mac
+* `explore .` opens the specific file for Windows
+
+
+------
+#### Using `TAB` can autocomplete the file or directory name. Autocomplete only works for unique files or directory names.
+
+#### How to use GitHub and Terminal / Command Prompt 
+Open the Terminal/Git Bash and (using only the command line) create the following:
+
+Navigate to your Desktop or Directory: cd Desktop
+
+Once there, create a new directory names test: mkdir test
+
+NOTE: When naming your directories and files, we generally want to avoid having spaces in the name. If you wish to have a descriptive name, it's recommended you use underscores. So, instead of naming a directory terminal prework, name it terminal_prework.
+Create a new txt file called sample: touch sample.txt
+
+Navigate into the test directory: cd test
+
+Check to see what's inside (it should be empty): ls
+
+Navigate back to Desktop: cd ..
+
+Move the sample.txt file into the test directory: mv sample.txt test
+
+Make sure this was successful: cd test press enter and then ls
+
+Time for some independent learning. Google to find a way to rename the sample.txt file to example.txt.
+
+Pat yourself on the back! You just took your first steps towards becoming a developer.
+
+
+
+##### Let's practice some examples.
+------
+#### 1. Create a new repository on GitHub and copy the link
+#### 2. On your Terminal / Command Prompt
+
+Copy the link
+In terminal, cd into the directory where you want your repo to live
+Clone the repo using git clone <repo name>
+cd into the repo
+Add a file
+Stage the changes in your current working directory using git add .
+Commit the changes using git commit -m "some message"
+Push the changes using git push origin main
+
+This will push your changes directly into the main branch. The main is the default branch of your repository, and as its name suggests, is the main source for your project.
+
+Historically, the most common name for the main body of a codebase has been master. Recently, however, main has been gaining in popularity. In fact, GitHub now uses main as the default name for its repositories - as do the projects in this course. Be aware that you might see instances of both throughout your development career, or hear experienced coders use the term "master branch" out of habit.
+
+As you might have guessed, we do not want to push directly to our main branch, and in fact, when working on a team, you likely will not have access to do so.
+
+To get around this, we use a workflow called Feature Branching. The main idea behind feature branching is that all feature development should take place in a dedicated branch rather than pushing directly to the main branch.
+
+Here's how you can work in this kind of environment:
+
+Create a new branch.
+
+Then, all changes to our repository (additions, modifications, or deletion) are made inside this branch.
+
+We then commit our changes, and push them to the remote source (GitHub).
+
+Once the branch has been pushed to the remote, we open a Pull Request.
+
+Once the Pull Request has been made, there will very often be automated tests that run to ensure that your modifications to not break the working application.
+
+Pull Requests also initiate a discussion about the changes you've committed, and generally have to be approved by someone else on the team. That person (or entire team) will review your changes to make sure that everything is in order.
+
+Once any concerns have been addressed and the Pull Request has been approved, the modified code is merged into the main branch.
+
+A great benefit of this process is that, once merged, Pull Requests act as a record of changes to the codebase, just like a save file!
+
+Feature Branches
+
+To create a new branch:
+
+cd into the repo directory
+Create and switch to a new branch using git checkout -b new-branch-name
+Make the changes to your repository that you desire
+Stage the changes using git add -A
+Commit the changes using git commit -m "some message"
+Push the changes using git push origin new-branch-name
+Navigate to your GitHub repository in your browser
+On the Pull requests tab, create a new pull request
+To switch between existing branches, use git checkout branch-name. Note that you do not need the -b flag in your git checkout command this time because we are not creating a new branch.
+
+To merge your changes into main, and update your local repository with those changes:
+
+On GitHub, merge the Pull Request you created.
+On your computer, switch back to your main branch using git checkout main
+Pull the updates from the remote server with git pull
+
+
+

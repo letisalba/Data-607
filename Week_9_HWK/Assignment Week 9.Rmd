@@ -1,0 +1,133 @@
+---
+title: "Data 607 Assignment Week 9"
+author: "Leticia Salazar"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: united
+    highlight: pygments
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Assignment – Web APIs
+
+##### The New York Times web site provides a rich set of APIs, as described here: https://developer.nytimes.com/apis You’ll need to start by signing up for an API key. Your task is to choose one of the New York Times APIs, construct an interface in R to read in the JSON data, and transform it into an R DataFrame.
+
+##### For this assignment I will be using [Top Stories API](https://developer.nytimes.com/docs/top-stories-product/1/overview) and focus on the section World.
+
+
+***
+
+### Libraries
+
+```{r}
+# install packages if you don't have them
+#install.packages("rjson")
+
+
+# load libraries
+library("tidyverse")
+library("jsonlite")
+library("httr")
+library("stringr")
+library("ggplot2")
+library("stringr")
+library("dplyr")
+```
+
+### Connection to API
+
+```{r}
+# API Key
+apikey <- "x3mOLM3nRnwjYVOuE89tloE62oC8NofC"
+
+# Get the URL 
+theURL <- paste("https://api.nytimes.com/svc/topstories/v2/world.json?api-key=", apikey)
+
+topstories <- GET(theURL)
+
+# Get status code
+topstories$status_code
+```
+
+```{r}
+summary(topstories)
+```
+
+```{r}
+top_stories <- content(topstories, as = "text")
+```
+
+
+### Data Frame Conversion
+
+```{r}
+#Option 1
+top_storiesdf <- top_stories %>% 
+  fromJSON() %>% 
+  as.data.frame()
+
+#Get column names
+colnames(top_storiesdf)
+```
+
+```{r}
+#Option 2
+top_storiesdf2 <- fromJSON(top_stories, flatten = TRUE)
+top_storiesdf2 <- data.frame(top_storiesdf2$results, stringsAsFactors = FALSE)
+
+#Get column names
+colnames(top_storiesdf2)
+```
+
+
+```{r}
+#Rename columns
+colnames(top_storiesdf2) <- c("Section","Subsection", "Title", "Abstract", "URL", "URI", "Byline", "Item_Type", "Updated_Date", "Created_Date", "Published_Date", "Material_Type_Facet", "Kicker", "Des_Facet", "Org_Facet", "Per_Facet", "Geo_Facet", "Multimedia", "Short_Url")
+
+#Drop columns not needed
+top_storiesdf3 <- top_storiesdf2[, -c(12:18)]
+```
+
+
+### Data Analysis
+
+```{r}
+#Count of Section
+Section <- top_storiesdf3%>%
+  group_by(Section)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Section)
+```
+
+
+```{r}
+#Count of Subsection
+Subsection <- top_storiesdf3%>%
+  group_by(Subsection)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Subsection)
+```
+
+
+```{r}
+# Bar Plot for Section
+top_storiesdf3 %>% 
+ggplot(aes(x = Section)) +
+  geom_bar()
+```
+
+
+```{r}
+# Bar Plot for Subsection
+top_storiesdf3 %>% 
+ggplot(aes(x = Subsection)) +
+  geom_bar()
+```
