@@ -117,6 +117,10 @@ head(Subsection)
 ```
 
 
+### Plots
+
+#### The bar plot below shows that plenty of the articles belong to the world section followed by briefing and science.
+
 ```{r}
 # Bar Plot for Section
 top_storiesdf3 %>% 
@@ -124,6 +128,8 @@ ggplot(aes(x = Section)) +
   geom_bar()
 ```
 
+
+#### Within the next bar plot there is an unknown subsection that has the highest count followed by Asia and Europe.
 
 ```{r}
 # Bar Plot for Subsection
