@@ -36,7 +36,6 @@ library("jsonlite")
 library("httr")
 library("stringr")
 library("ggplot2")
-library("stringr")
 library("dplyr")
 ```
 
