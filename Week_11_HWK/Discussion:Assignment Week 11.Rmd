@@ -1,0 +1,116 @@
+---
+title: "Data 607 Discussion / Assignment Week 11"
+author: "Leticia Salazar"
+date: "11/3/2021"
+output:
+  html_document:
+    theme: yeti
+    highlight: tango
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### **Recommender Systems**
+
+$~$
+
+#### **Your task is to analyze an existing recommender system that you find interesting.**
+
+$~$
+
+#### **Perform a Scenario Design analysis as described below.**  
+* Consider whether it makes sense for your selected recommender system to perform scenario design twice, once for the organization (e.g. Amazon.com) and once for the organization's customers. 
+* Attempt to reverse engineer what you can about the site, from the site interface and any available information that you can find on the Internet or elsewhere.
+* Include specific recommendations about how to improve the site's recommendation capabilities going forward. 
+* Create your report using an R Markdown file, and create a discussion thread with a link to the GitHub repo where your Markdown file notebook resides.  You are not expected to need to write code for this discussion assignment.
+
+$~$
+
+
+
+
+### **Platform: Etsy**
+$~$
+
+![](/Users/letiix3/Desktop/Data-607/Week_11_HWK/Pictures/etsy_homepage.png)
+
+$~$
+
+Etsy is a platform where you can buy and sell handmade items ranging from jewelry, arts and crafts, clothing, furniture and more. As stated by the [Journey to Data Scientist: Recommender Systems at Etsy](https://journeytodatascientist.blog/2020/04/18/recommender-systems-at-etsy/), "one feature of Etsy, is that it provides personalized item recommendations to buyers based on their previous interactions on the site". Etsy has more than 4.3 million active sellers, of which 83% are women sellers (Pengue, 2021). Being popular within the United States Etsy sellers and buyers are also found around the world including the United Kingdom, Canada, Austrailia, Germany, and France.
+
+$~$
+
+![(Pengue, 2021)](/Users/letiix3/Desktop/Data-607/Week_11_HWK/Pictures/etsy_world.png)
+
+
+$~$
+
+### **Scenario Analysis:**
+
+**1. Who are your target users?**
+
+The target users are mainly women but there are male sellers and buyers as well. Prices can vary but are reasonable. There are two types of targeted users:
+
+* **The sellers**: those who wish to sell their good and products. The sellers can be independent artists or group of people who want to form a business but would rather do the online setting instead of a store front.
+
+* **The buyers**: those who want to shop and support small / medium size businesses and get quality handmade products, customized items, great customer service at reasonable prices. 
+
+
+**2. What are their key goals?**
+
+Etsy's key goals are to create economic and diverse opportunities for entrepreneurs. According to their website [Etsy's Mission](https://www.etsy.com/mission) they are committed to their craft, minimize waste and embrace cultural differences. For sellers, their key goals is to expand their business within Etsy to be able to make profits. The buyer's key goals would be to obtain excellent service and quality handmade products for great prices from the comfort of their homes.
+
+**3. How an you help them accomplish those goals?**
+
+* **For the sellers:** providing accurate descriptions of products, value prices for these products, great customer service, get rated well to continue selling their products. Being able to ship products worldwide and have a variety of payment methods.
+
+* **For the buyers:** find one-of-a-kind products, be able to receive product worldwide, be able to have different payment options, and reasonable prices.
+
+$~$
+
+### **Recommender System:**
+$~$
+
+![](/Users/letiix3/Desktop/Data-607/Week_11_HWK/Pictures/explore_one_of_a_kind.png)
+
+With Etsy, they "provide personalized item recommendations to buyers based on their previous interactions on the site" (Agarwal, 2021). Users have the option of exploring and purchasing items with or without an account. Etsy uses implicit user feedback which "includes all of a users interactions on a site including the items that they purchases, items that they favorited, items that they clicked on and even items that they saw but made no interactions with" (Anishabharathsingh, 2020). By doing so, Etsy can infer user's future purchases.
+
+![](/Users/letiix3/Desktop/Data-607/Week_11_HWK/Pictures/shops_we_think_you'll_love.png)
+$~$
+
+I am an Etsy buyer and have occasionally looked for gift options and ideas. Every time I log into my Etsy page these are a couple of recommendations I see based on my searches:
+
+*This first option gives me the opportunity to browse using selected categories they have provided.*
+
+1. ![](/Users/letiix3/Desktop/Data-607/Week_11_HWK/Pictures/gift_finder.png)
+
+*This second option gives me a more generalized way to search for items based on my popular searches and purchases.*
+
+2. ![](/Users/letiix3/Desktop/Data-607/Week_11_HWK/Pictures/recommended_categories.png)
+
+
+### **Recommendations:**
+
+The article Journey to Data Scientist: Recommender Systems at Etsy does a great job explaining the issues Etsy ran into using their recommender system. They mention that due to the amount of users and product listings, it was hard to compute the purchase probabilities. As stated in the article, "they did it in a two stage process: 1) “Candidate Selection” in which millions of listings are filtered down to hundreds of relevant items and 2) “Ranker” in which those items are then ranked based on relevance using more precision." In addition to this Etsy also used Area under the Curve (AUC), Normalized Discounted Cumulative Gain (NDCG) and Profit to evaluate their model. Personally, Etsy has done well with my recommendations with the categories I choose. Maybe if I were a more active user I'd notice a difference with their recommender system as opposed to my limited activity now. 
+
+$~$
+
+### **References:**
+* Anishabharathsingh. (2020, April 19). Recommender Systems at Etsy. Journey to Data Scientist. Retrieved November 2, 2021, from https://journeytodatascientist.blog/2020/04/18/recommender-systems-at-etsy/.
+
+
+* Agarwal, S. (2021, April 14). Etsy. Medium. Retrieved November 3, 2021, from https://sparsh-ai.medium.com/etsy-b2f717df0509. 
+
+
+* Gebel, M. (2020, December 18). What is etsy? everything you need to know before buying or selling on the handmade and vintage e-commerce platform for independent creators. Business Insider. Retrieved November 3, 2021, from https://www.businessinsider.com/what-is-etsy. 
+
+
+* Pengue, M. (2021, October 14). Etsy statistics: Buyers Demographics, revenues, and sales: 2021. WBL. Retrieved November 3, 2021, from https://writersblocklive.com/blog/etsy-statistics/. 
+
+
+
+
