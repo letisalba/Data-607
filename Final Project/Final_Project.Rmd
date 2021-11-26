@@ -1,0 +1,27 @@
+---
+title: 'Data 607: Final Project'
+author: "Leticia Salazar"
+date: "11/15/2021"
+output:
+  html_document:
+    theme: darkly
+    heighlight: breezedark
+    toc: yes
+    toc_float: yes
+---
+
+### Final Project: Apartment Rental Cost Changes Over Time
+
+### Introduction
+
+#### Load Data:
+
+```{r}
+# 
+```
+
+
+### Exploratory Data Analysis
+
+### References
+

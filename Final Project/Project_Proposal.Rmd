@@ -1,0 +1,23 @@
+---
+title: "Data 607: Project Proposal"
+author: "Leticia Salazar"
+date: "11/14/2021"
+output:
+    html_document:
+    theme: yeti
+    highlight: tango
+---
+
+### Final Project Proposal: Apartment Rental Cost Changes Over Time
+
+##### For my final project I will be looking into cost of renting an apartment in NYC has changed within the few decades. There's no suprise that plenty of apartment buildings have seen a price increase and with the recent pandemic, plenty of people were not able to pay their rent on time or at all. Llooking at how the pandemic affected these rental cost would be a great addition to my analysis. 
+
+##### I'll study data obtained from the following sources:
+
+* [StreetEasy Data Dashboard](https://streeteasy.com/blog/data-dashboard/)
+* [iProperty Management](https://ipropertymanagement.com/research/average-rent-by-year)
+* [Apartment List](https://www.apartmentlist.com/research/national-rent-data)
+* [Statista](https://www.statista.com/topics/4465/rental-market-in-the-us/#dossierKeyfigures)
+
+
+##### My ultimate goal is to create visualizations that show the upward trends in pricing for rental units of all sizes: studio, 1 bedroom, 2 bedrooms, 3 bedrooms and more within NYC. I expect to see some pricing outliers in some boroughs as well as some stablizations in rent during the recession and pandemic years. 
