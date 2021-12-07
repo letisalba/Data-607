@@ -1301,23 +1301,33 @@ $~$
 $~$
 
 ## Conclusion
-#### Each dataset required a bit of wrangling but after some exploration I found the following results:
+Each data set required a bit of wrangling but after some exploration I found the following results:
+
+$~$
+
 * From the StreetEasy data set the 5 boroughs ranked:
   * Queens with 60 counts
   * Brooklyn with 55 counts
   * Bronx with 43 counts
   * Manhattan with 38 counts and
   * Staten Island with 1 count
+
+$~$
   
-#### When taking into consideration the apartment types within the StreetEasy data set the rent averages per year were:
+When taking into consideration the apartment types within the StreetEasy data set the rent averages per year were:
+
+$~$
+
   * 2016 - $1730
   * 2017 - $1798
   * 2018 - $1830
   * 2019 - $1902
   * 2020 - $1760
-  * 2021 - $1780
-  
-#### How does that compare to the entire United States? From the table below, overall, New York has a higher average rent from the years 2017 - 2021. There was about a $700 difference between the years 2017 - 2019 but from 2020 - 2021 the difference dropped to about $500. 
+  * 2021 - $1780 [Average counts from January - October 2021; this average rent price will increase when adding November and December 2021.]
+
+$~$
+
+How does that compare to the entire United States? From the table below, overall, New York has a higher average rent from the years 2017 - 2021. There was about a 39% difference between the years 2017 - 2019 but from 2020 - 2021 the difference dropped to about 30% of rent increase. 
 
 $~$
 
@@ -1331,7 +1341,30 @@ comparison
 
 $~$
 
-#### Digging deeper, using the Apartment List data set, I am comparing the years 2019 - 2021 with the average cost of each apartment types and obtained the results below: 
+```{r}
+# Percent difference for rent averages
+
+# percent_diff <- ((new_avg - old_avg) / new_avg) * 100 
+
+percent_diff17 <- ((1798 - 1091) / 1798) * 100
+percent_diff17
+
+percent_diff18 <- ((1830 - 1120) / 1830) * 100
+percent_diff18
+
+percent_diff19 <- ((1902 - 1152) / 1902) * 100
+percent_diff19
+
+percent_diff20 <- ((1760 - 1162) / 1760) * 100
+percent_diff20
+
+percent_diff21 <- ((1780 - 1241) / 1780) * 100
+percent_diff21
+```
+
+$~$
+
+Digging deeper, using the Apartment List data set, I am comparing the years 2019 - 2021 with the average cost of each apartment types and obtained the results below: 
 
 ```{r}
 # Comparison of all apartment types for year 2019 - 2021 from Apartment List
@@ -1344,17 +1377,39 @@ comparison2
 
 $~$
 
-#### For all 5 apartment types there is a small increase in rent of about 7% from 2019 to 2021. 
+For all 5 apartment types there is a small increase in rent of about 7% from 2019 to 2021. 
 
 $~$
 
-#### After importing my data sets into Tableau Public I was able to create more visuals that led to the following conclusions:
+```{r}
+# Percent difference for rent averages from 2019 and 2021
 
+# percent_diff <- ((new_avg - old_avg) / new_avg) * 100 
+
+studio <- ((917 - 853) / 917) * 100
+studio
+
+one_bdr <- ((981 - 912) / 981) * 100
+one_bdr
+
+two_bdr <- ((1197 - 1111) / 1197) * 100
+two_bdr
+
+three_bdr <- ((1441 - 1336) / 1441) * 100
+three_bdr
+
+four_bdr <- ((1710 - 1587) / 1710) * 100
+four_bdr
+```
+
+$~$
+
+After importing my data sets into Tableau Public I was able to create more visuals that led to the following conclusions:
 
 * From the StreetEasy data the areas in NYC with the highest average rent are Central Park South, Battery Park City, Tribeca, Soho and Midtown. No surprise it's only Manhattan!
 * Looking at the all the boroughs, Manhattan, Brooklyn and Queens are the top three with the highest rents.
-* From Codecademy + StreetEasy data set from June 2016, the most number  of bedrooms in apartments were 1 and 2 bedrooms followed by studios. 
-* Top 6 Neighborhoods were Upper West Side, Upper East Side, Midtown East, Midtown West, Williamsburg and the Financial District. 
+* From Codecademy + StreetEasy data set from June 2016, the most number of bedrooms in apartments were 1 and 2 bedrooms followed by studios.
+* Top 6 Neighborhoods within the dataset were Upper West Side, Upper East Side, Midtown East, Midtown West, Williamsburg and the Financial District. 
 * With the top 3 boroughs the neighborhoods with the highest average rent are:
   * Brooklyn
     * Dumbo
@@ -1375,7 +1430,13 @@ $~$
     * Flushing
     * Ridgewood
     
-#### The pandemic has affected rent prices all throughout the United States. Although the most expensive states saw rent price drops between 2020 and 2021, there have been increases in average rent as well in the US. New York has one of the highest average in rent prices compared to the United States overall. Not only that but based on these numbers I predict that apartment rental prices will continue to rise an average of about 7% within the next two years.
+The pandemic has affected rent prices all throughout the United States. Although the most expensive states saw rent price drops between 2020 and 2021, there have been increases in average rent as well. New York has one of the highest average in rent prices nationwide. Not only that but based on these numbers I predict that apartment rental prices will continue to rise an average of about 7% within the next two years.
+
+$~$
+
+## Assumptions
+
+While thinking about this project, I made a couple of assumptions. The first being the timeline I should consider, if 2018 - 2021 would suffice. While exploring the data I decided that I had to expand my search and opted for 2016 - 2021. I also thought I would see a larger decrease in rent for 2020 and into 2021 since media coverage has covered how much rent prices in New York and throughout the 5 boroughs have decreased. One assumption that was true was Manhattan having the highest average rent price in NYC. 
 
 $~$
 
