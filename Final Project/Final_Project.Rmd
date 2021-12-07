@@ -1,27 +1,1408 @@
 ---
 title: 'Data 607: Final Project'
 author: "Leticia Salazar"
-date: "11/15/2021"
 output:
   html_document:
-    theme: darkly
-    heighlight: breezedark
+    theme: journal
+    highlight: pygments
     toc: yes
     toc_float: yes
 ---
 
-### Final Project: Apartment Rental Cost Changes Over Time
+## Apartment Rental Cost Changes Over Time in New York
 
-### Introduction
+## Introduction 
 
-#### Load Data:
+Rental prices have increased since 1980 on average 8.86% per year. Nationwide the average monthly rent is $1,164 and within the 21st century the median rent increases at an annual rate of 4.17%. How does this compare by state, particularly in New York? Did the pandemic have a big effect on these rental cost prices? To answer these questions and more, I will be using three data sets including: Street Easy Data, Codecademy in GitHub, and Apartment List that include data from 2016 - October 2021. I will be wrangling and exploring this data and using Tableau Public to create visual aids to show how rental costs have changed over time.
+
+$~$
+
+### Load Libraries:
 
 ```{r}
-# 
+library(tidyverse)
+library(stringr)
+library(dplyr)
+library(tidyr)
+```
+
+$~$
+
+## StreetEasy Data Wrangling
+
+Street Easy Data from 2016 - October 2021 data sets containing All apartment types, Studio, One Bedroom, Two Bedrooms, and Three Bedrooms or more. I'll be exploring the data sets individually and then joining them to compare.
+
+$~$
+
+### Load StreetEasy Data
+
+```{r}
+# StreetEasy Data
+
+# All types of Apartments
+street_easy_all <- read.csv("https://raw.githubusercontent.com/letisalba/Data-607/main/Final%20Project/csv%20files/medianAskingRent_All.csv", header = TRUE, stringsAsFactors = FALSE, na.strings = c(""," ","NA"));
+
+# Studio's only
+street_easy_studio <-  read.csv("https://raw.githubusercontent.com/letisalba/Data-607/main/Final%20Project/csv%20files/medianAskingRent_Studio.csv", header = TRUE, stringsAsFactors = FALSE, na.strings = c(""," ","NA"));
+
+# One Bedroom only
+street_easy_onebrd <- read.csv("https://raw.githubusercontent.com/letisalba/Data-607/main/Final%20Project/csv%20files/medianAskingRent_OneBd.csv", header = TRUE, stringsAsFactors = FALSE, na.strings = c(""," ","NA"));
+
+# Two Bedrooms only
+street_easy_twobrd <- read.csv("https://raw.githubusercontent.com/letisalba/Data-607/main/Final%20Project/csv%20files/medianAskingRent_TwoBd.csv", header = TRUE, stringsAsFactors = FALSE, na.strings = c(""," ","NA"));
+
+# Three or more Bedrooms only
+street_easy_threebrds <- read.csv("https://raw.githubusercontent.com/letisalba/Data-607/main/Final%20Project/csv%20files/medianAskingRent_ThreePlusBd.csv", header = TRUE, stringsAsFactors = FALSE, na.strings = c(""," ","NA"));
+```
+
+$~$
+
+### Street Easy All
+Rows: 198 
+Columns: 145
+
+$~$
+
+```{r}
+# Remove columns not needed
+streeteasy_all <- street_easy_all[, -c(4:75)]
+
+# Rename columns
+colnames(streeteasy_all) <- c("Area_Name", "Borough", "Area_Type", "Jan_2016", "Feb_2016", "Mar_2016", "Apr_2016", "May_2016", "Jun_2016", "Jul_2016", "Aug_2016", "Sep_2016", "Oct_2016", "Nov_2016", "Dec_2016", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021")
+
+# Replace all NA values with 0
+streeteasy_all <- streeteasy_all %>% replace(is.na(.), 0)
+```
+
+$~$
+
+#### Year 2016
+
+```{r}
+# Select columns from 2016
+yr2016_all <- streeteasy_all %>% 
+  select(4:15)
+
+# cbind new columns with Mean of 2016
+yr_2016_all <- cbind(yr2016_all, Year_2016_All = round(rowMeans(yr2016_all)))
+```
+
+$~$
+
+#### Year 2017
+
+```{r}
+# Select columns from 2017 
+yr2017_all <- streeteasy_all %>% 
+  select(16:27)
+
+# cbind new columns with Mean of 2017
+yr_2017_all <- cbind(yr2017_all, Year_2017_All = round(rowMeans(yr2017_all)))
+
+```
+
+$~$
+
+#### Year 2018
+
+```{r}
+# Select columns from 2018
+yr2018_all <- streeteasy_all %>% 
+  select(28:39)
+
+# cbind new columns with Mean of 2018
+yr_2018_all <- cbind(yr2018_all, Year_2018_All = round(rowMeans(yr2018_all)))
+```
+
+$~$
+
+#### Year 2019
+
+```{r}
+# Select columns from 2019
+yr2019_all <- streeteasy_all %>% 
+  select(40:51)
+
+# cbind new columns with Mean of 2019
+yr_2019_all <- cbind(yr2019_all, Year_2019_All = round(rowMeans(yr2019_all)))
+```
+
+$~$
+
+#### Year 2020
+
+```{r}
+# Select columns for 2020
+yr2020_all <- streeteasy_all %>% 
+  select(52:63)
+
+# cbind new columns with Mean of 2020
+yr_2020_all <- cbind(yr2020_all, Year_2020_All = round(rowMeans(yr2020_all)))
+```
+
+$~$
+
+#### Year 2021
+
+```{r}
+# Select columns for 2021
+yr2021_all <- streeteasy_all %>% 
+  select(64:73)
+
+# cbind new columns with Mean of 2021
+yr_2021_all <- cbind(yr2021_all, Year_2021_All = round(rowMeans(yr2021_all)))
+```
+
+$~$
+
+### Street Easy Studio
+Rows: 198 
+Columns: 145
+
+$~$
+
+```{r}
+# Remove columns not needed
+streeteasy_studio <- street_easy_studio[, -c(4:75)]
+
+# Rename columns
+colnames(streeteasy_studio) <- c("Area_Name", "Borough", "Area_Type", "Jan_2016", "Feb_2016", "Mar_2016", "Apr_2016", "May_2016", "Jun_2016", "Jul_2016", "Aug_2016", "Sep_2016", "Oct_2016", "Nov_2016", "Dec_2016", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021")
+
+# Replace all NA values with 0
+streeteasy_studio <- streeteasy_studio %>% replace(is.na(.), 0)
+```
+
+$~$
+
+#### Year 2016
+
+```{r}
+# Select columns from 2016
+yr2016_studio <- streeteasy_studio %>% 
+  select(4:15)
+
+# cbind new columns with Mean of 2016
+yr_2016_studio <- cbind(yr2016_studio, Year_2016_Studio = round(rowMeans(yr2016_studio)))
+```
+
+$~$
+
+#### Year 2017
+
+```{r}
+# Select columns from 2017
+yr2017_studio <- streeteasy_studio %>% 
+  select(16:27)
+
+# cbind new columns with Mean of 2017
+yr_2017_studio <- cbind(yr2017_studio, Year_2017_Studio = round(rowMeans(yr2017_studio)))
+```
+
+$~$
+
+#### Year 2018
+
+```{r}
+# Select columns from 2018
+yr2018_studio <- streeteasy_studio %>% 
+  select(28:39)
+
+# cbind new columns with Mean of 2018
+yr_2018_studio <- cbind(yr2018_studio, Year_2018_Studio = round(rowMeans(yr2018_studio)))
+```
+
+$~$
+
+#### Year 2019
+
+```{r}
+# Select columns from 2019
+yr2019_studio <- streeteasy_studio %>% 
+  select(40:51)
+
+# cbind new columns with Mean of 2019
+yr_2019_studio <- cbind(yr2019_studio, Year_2019_Studio = round(rowMeans(yr2019_studio)))
+```
+
+$~$
+
+#### Year 2020
+
+```{r}
+# Select columns from 2020
+yr2020_studio <- streeteasy_studio %>% 
+  select(52:63)
+
+# cbind new columns with Mean of 2020
+yr_2020_studio <- cbind(yr2020_studio, Year_2020_Studio = round(rowMeans(yr2020_studio)))
+```
+
+$~$
+
+#### Year 2021
+
+```{r}
+# Select columns from 2021
+yr2021_studio <- streeteasy_studio %>% 
+  select(64:73)
+
+# cbind new columns with Mean of 2021
+yr_2021_studio <- cbind(yr2021_studio, Year_2021_Studio = round(rowMeans(yr2021_studio)))
+```
+
+$~$
+
+### Street Easy One Bedroom
+Rows: 198 
+Columns: 145
+
+$~$
+
+```{r}
+# Remove columns not needed
+streeteasy_onebdr <- street_easy_onebrd[, -c(4:75)]
+
+# Rename columns
+colnames(streeteasy_onebdr) <- c("Area_Name", "Borough", "Area_Type", "Jan_2016", "Feb_2016", "Mar_2016", "Apr_2016", "May_2016", "Jun_2016", "Jul_2016", "Aug_2016", "Sep_2016", "Oct_2016", "Nov_2016", "Dec_2016", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021")
+
+# Replace all NA values with 0
+streeteasy_onebdr <- streeteasy_onebdr %>% replace(is.na(.), 0)
+```
+
+$~$
+
+#### Year 2016
+
+```{r}
+# Select columns from 2016
+yr2016_onebdr <- streeteasy_onebdr %>% 
+  select(4:15)
+
+# cbind new columns with Mean of 2016
+yr_2016_onebdr <- cbind(yr2016_onebdr, Year_2016_OneBdr = round(rowMeans(yr2016_onebdr)))
+```
+
+$~$
+
+#### Year 2017
+
+```{r}
+# Select columns from 2017
+yr2017_onebdr<- streeteasy_onebdr %>% 
+  select(16:27)
+
+# cbind new columns with Mean of 2017
+yr_2017_onebdr<- cbind(yr2017_onebdr, Year_2017_OneBdr = round(rowMeans(yr2017_onebdr)))
+```
+
+$~$
+
+#### Year 2018
+
+```{r}
+# Select columns from 2018
+yr2018_onebdr <- streeteasy_onebdr %>% 
+  select(28:39)
+
+# cbind new columns with Mean of 2018
+yr_2018_onebdr <- cbind(yr2018_onebdr, Year_2018_OneBdr = round(rowMeans(yr2018_onebdr)))
+```
+
+$~$
+
+#### Year 2019
+
+```{r}
+# Select columns from 2019
+yr2019_onebdr <- streeteasy_onebdr %>% 
+  select(40:51)
+
+# cbind new columns with Mean of 2019
+yr_2019_onebdr <- cbind(yr2019_onebdr, Year_2019_OneBdr = round(rowMeans(yr2019_onebdr)))
+```
+
+$~$
+
+#### Year 2020
+
+```{r}
+# Select columns from 2020
+yr2020_onebdr <- streeteasy_onebdr %>% 
+  select(52:63)
+
+# cbind new columns with Mean of 2020
+yr_2020_onebdr <- cbind(yr2020_onebdr, Year_2020_OneBdr = round(rowMeans(yr2020_onebdr)))
+```
+
+$~$
+
+#### Year 2021
+
+```{r}
+# Select columns from 2021
+yr2021_onebdr <- streeteasy_onebdr %>% 
+  select(64:73)
+
+# cbind new columns with Mean of 2020
+yr_2021_onebdr <- cbind(yr2021_onebdr, Year_2021_OneBdr = round(rowMeans(yr2021_onebdr)))
+```
+
+$~$
+
+### Street Easy Two Bedrooms
+Rows: 198 
+Columns: 145
+
+$~$
+
+```{r}
+# Remove columns not needed
+streeteasy_twobrd <- street_easy_twobrd[, -c(4:75)]
+
+# Rename columns
+colnames(streeteasy_twobrd) <- c("Area_Name", "Borough", "Area_Type", "Jan_2016", "Feb_2016", "Mar_2016", "Apr_2016", "May_2016", "Jun_2016", "Jul_2016", "Aug_2016", "Sep_2016", "Oct_2016", "Nov_2016", "Dec_2016", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021")
+
+# Replace all NA values with 0
+streeteasy_twobrd <- streeteasy_twobrd %>% replace(is.na(.), 0)
+```
+
+$~$
+
+#### Year 2016
+
+```{r}
+# Select columns from 2016
+yr2016_twobdr <- streeteasy_twobrd %>% 
+  select(4:15)
+
+# cbind new columns with Mean of 2016
+yr_2016_twobdr <- cbind(yr2016_twobdr, Year_2016_TwoBdr = round(rowMeans(yr2016_twobdr)))
+```
+
+$~$
+
+#### Year 2017
+
+```{r}
+# Select columns from 2017
+yr2017_twobdr <- streeteasy_twobrd %>% 
+  select(16:27)
+
+# cbind new columns with Mean of 2017
+yr_2017_twobdr <- cbind(yr2017_twobdr, Year_2017_TwoBdr = round(rowMeans(yr2017_twobdr)))
+```
+
+$~$
+
+#### Year 2018
+
+```{r}
+# Select columns from 2018
+yr2018_twobdr <- streeteasy_twobrd %>% 
+  select(28:39)
+
+# cbind new columns with Mean of 2018
+yr_2018_twobdr <- cbind(yr2018_twobdr, Year_2018_TwoBdr = round(rowMeans(yr2018_twobdr)))
+```
+
+$~$
+
+#### Year 2019
+
+```{r}
+# Select columns from 2019
+yr2019_twobdr <- streeteasy_twobrd %>% 
+  select(40:51)
+
+# cbind new columns with Mean of 2019
+yr_2019_twobdr <- cbind(yr2019_twobdr, Year_2019_TwoBdr = round(rowMeans(yr2019_twobdr)))
+```
+
+$~$
+
+#### Year 2020
+
+```{r}
+# Select columns from 2020
+yr2020_twobdr <- streeteasy_twobrd %>% 
+  select(52:63)
+
+# cbind new columns with Mean of 2020
+yr_2020_twobdr <- cbind(yr2020_twobdr, Year_2020_TwoBdr = round(rowMeans(yr2020_twobdr)))
+```
+
+$~$
+
+#### Year 2021
+
+```{r}
+# Select columns from 2021
+yr2021_twobdr <- streeteasy_twobrd %>% 
+  select(64:73)
+
+# cbind new columns with Mean of 2020
+yr_2021_twobdr <- cbind(yr2021_twobdr, Year_2021_TwoBdr = round(rowMeans(yr2021_twobdr)))
+```
+
+$~$
+
+### Street Easy Three+ Bedrooms
+Rows: 198 
+Columns: 145
+
+$~$
+
+```{r}
+# Remove columns not needed
+streeteasy_threebrds <- street_easy_threebrds[, -c(4:75)]
+
+# Rename columns
+colnames(streeteasy_threebrds) <- c("Area_Name", "Borough", "Area_Type", "Jan_2016", "Feb_2016", "Mar_2016", "Apr_2016", "May_2016", "Jun_2016", "Jul_2016", "Aug_2016", "Sep_2016", "Oct_2016", "Nov_2016", "Dec_2016", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021")
+
+# Replace all NA values with 0
+streeteasy_threebrds <- streeteasy_threebrds %>% replace(is.na(.), 0)
+```
+
+$~$
+
+#### Year 2016
+
+```{r}
+# Select columns from 2016
+yr2016_threebdrs <- streeteasy_threebrds %>% 
+  select(4:15)
+
+# cbind new columns with Mean of 2016
+yr_2016_threebdrs <- cbind(yr2016_threebdrs, Year_2016_ThreeBdrs = round(rowMeans(yr2016_threebdrs)))
+```
+
+$~$
+
+#### Year 2017
+
+```{r}
+# Select columns from 2017
+yr2017_threebdrs <- streeteasy_threebrds %>% 
+  select(16:27)
+
+# cbind new columns with Mean of 2017
+yr_2017_threebdrs <- cbind(yr2017_threebdrs, Year_2017_ThreeBdrs = round(rowMeans(yr2017_threebdrs)))
+```
+
+$~$
+
+#### Year 2018
+
+```{r}
+# Select columns from 2018
+yr2018_threebdrs <- streeteasy_threebrds %>% 
+  select(28:39)
+
+# cbind new columns with Mean of 2018
+yr_2018_threebdrs <- cbind(yr2018_threebdrs, Year_2018_ThreeBdrs = round(rowMeans(yr2018_threebdrs)))
+```
+
+$~$
+
+#### Year 2019
+
+```{r}
+# Select columns from 2019
+yr2019_threebdrs <- streeteasy_threebrds %>% 
+  select(40:51)
+
+# cbind new columns with Mean of 2019
+yr_2019_threebdrs <- cbind(yr2019_threebdrs, Year_2019_ThreeBdrs = round(rowMeans(yr2019_threebdrs)))
+```
+
+$~$
+
+#### Year 2020
+
+```{r}
+# Select columns from 2020
+yr2020_threebdrs <- streeteasy_threebrds %>% 
+  select(52:63)
+
+# cbind new columns with Mean of 2020
+yr_2020_threebdrs <- cbind(yr2020_threebdrs, Year_2020_ThreeBdrs = round(rowMeans(yr2020_threebdrs)))
+```
+
+$~$
+
+#### Year 2021
+
+```{r}
+# Select columns from 2021
+yr2021_threebdrs <- streeteasy_threebrds %>% 
+  select(64:73)
+
+# cbind new columns with Mean of 2020
+yr_2021_threebdrs <- cbind(yr2021_threebdrs, Year_2021_ThreeBdrs = round(rowMeans(yr2021_threebdrs)))
+```
+
+$~$
+
+### Combining tables by Year
+
+```{r}
+# cbind year 2016 for all apartment types
+street_easy16 <- cbind(yr_2016_studio, yr_2016_onebdr, yr_2016_twobdr, yr_2016_threebdrs)
+street_easy16 <- street_easy16[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# cbind year 2017 for all apartment types
+street_easy17 <- cbind(yr_2017_studio, yr_2017_onebdr, yr_2017_twobdr, yr_2017_threebdrs)
+street_easy17 <- street_easy17[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# cbind year 2018 for all apartment types
+street_easy18 <- cbind(yr_2018_studio, yr_2018_onebdr, yr_2018_twobdr, yr_2018_threebdrs)
+street_easy18 <- street_easy18[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# cbind year 2019 for all apartment types
+street_easy19 <- cbind(yr_2019_studio, yr_2019_onebdr, yr_2019_twobdr, yr_2019_threebdrs)
+street_easy19 <- street_easy19[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# cbind year 2020 for all apartment types
+street_easy20 <- cbind(yr_2020_studio, yr_2020_onebdr, yr_2020_twobdr, yr_2020_threebdrs)
+street_easy20 <- street_easy20[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# cbind year 2021 for all apartment types
+street_easy21 <- cbind(yr_2021_studio, yr_2021_onebdr, yr_2021_twobdr, yr_2021_threebdrs)
+street_easy21 <- street_easy21[-c(1:10, 12:21, 23:32, 34:43)]
+```
+
+$~$
+
+### Joining original table with new per Year tables
+
+```{r}
+# cbind original table with new table and drop all columns not needed
+street_easy_All <- cbind(streeteasy_all, street_easy16, street_easy17, street_easy18, street_easy19, street_easy20, street_easy21)
+
+# Dropping columns not needed
+street_easy_All <- street_easy_All[-c(4:73)]
+```
+
+$~$
+
+### Combine tables by apartment type
+
+Another way to combine tables to explore
+
+```{r}
+# cbind all tables with the mean and drop all columns not needed
+
+# All Apt Types
+street_easyall <-  cbind(yr_2016_all, yr_2017_all, yr_2018_all, yr_2019_all, yr_2020_all, yr_2021_all) 
+street_easyall <- street_easyall[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# Studio's only
+street_easystudio <- cbind(yr_2016_studio, yr_2017_studio, yr_2018_studio, yr_2019_studio, yr_2020_studio, yr_2021_studio)
+street_easystudio <- street_easystudio[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# One Bedroom only
+street_easyonebdr <- cbind(yr_2016_onebdr, yr_2017_onebdr, yr_2018_onebdr, yr_2019_onebdr, yr_2020_onebdr, yr_2021_onebdr)
+street_easyonebdr <- street_easyonebdr[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# Two Bedrooms only
+street_easytwobdr <- cbind(yr_2016_twobdr, yr_2017_twobdr, yr_2018_twobdr, yr_2019_twobdr, yr_2020_twobdr, yr_2021_twobdr)
+street_easytwobdr <- street_easytwobdr[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+
+# Three Bedrooms only
+street_easythreebdrs <- cbind(yr_2016_threebdrs, yr_2017_threebdrs, yr_2018_threebdrs, yr_2019_threebdrs, yr_2020_threebdrs, yr_2021_threebdrs)
+street_easythreebdrs <- street_easythreebdrs[-c(1:12, 14:25, 27:38, 40:51, 53:64, 66:75)]
+```
+
+$~$
+
+### Combine tables Studio, One Bedroom, Two Bedrooms, and Three Bedrooms ONLY
+Another way to combine tables to explore
+
+```{r}
+# cbind all Studio tables with original dataset and drop columns not needed
+Street_Easy_Studio <- cbind(streeteasy_all, yr_2016_studio, yr_2017_studio, yr_2018_studio, yr_2019_studio, yr_2020_studio, yr_2021_studio)
+Street_Easy_Studio <- Street_Easy_Studio[-c(4:85, 87:98, 100:111, 113:124, 126:137, 139:148)]
+
+
+# cbind all One Bedroom tables with original dataset and drop columns not needed
+Street_Easy_OneBdr <- cbind(streeteasy_all, yr_2016_onebdr, yr_2017_onebdr, yr_2018_onebdr, yr_2019_onebdr, yr_2020_onebdr, yr_2021_onebdr)
+Street_Easy_OneBdr <- Street_Easy_OneBdr[-c(4:85, 87:98, 100:111, 113:124, 126:137, 139:148)]
+
+# cbind all Two Bedrooms tables with original dataset and drop columns not needed
+Street_Easy_TwoBdr <- cbind(streeteasy_all, yr_2016_twobdr, yr_2017_twobdr, yr_2018_twobdr, yr_2019_twobdr, yr_2020_twobdr, yr_2021_twobdr)
+Street_Easy_TwoBdr <- Street_Easy_TwoBdr[-c(4:85, 87:98, 100:111, 113:124, 126:137, 139:148)]
+
+# cbind all 3 or more Bedrooms with original data set and drop columns not needed
+Street_Easy_ThreeBdrs <- cbind(streeteasy_all, yr_2016_threebdrs, yr_2017_threebdrs, yr_2018_threebdrs, yr_2019_threebdrs, yr_2020_threebdrs, yr_2021_threebdrs)
+Street_Easy_ThreeBdrs <- Street_Easy_ThreeBdrs[-c(4:85, 87:98, 100:111, 113:124, 126:137, 139:148)]
+
+```
+
+$~$
+
+### Join tables by apartment type
+This data frame will be used to write .csv file to then be used in tableau. This was easier to explore since it was already categorized by apartment type with a subcategory of years.
+
+```{r}
+# cbind original table with new table and drop all columns not needed
+Street_Easy_All <- cbind(streeteasy_all, street_easyall, street_easystudio, street_easyonebdr, street_easytwobdr, street_easythreebdrs)
+
+# Dropping columns not needed
+Street_Easy_All <- Street_Easy_All[-c(4:73)]
+
+# Replace 0 in Borough column with NYC 
+Street_Easy_All$Borough[Street_Easy_All$Borough=="0"]<-"NYC"
+head(Street_Easy_All, n = 4)
+```
+$~$
+
+## StreetEasy Data Exploration
+
+```{r}
+# Count of Boroughs
+borough <- Street_Easy_All %>%
+  group_by(Borough) %>%
+  summarise(num=n()) %>%
+  arrange(desc(num))
+head(borough, n = 6)
+```
+
+$~$
+
+```{r}
+summary(Street_Easy_All)
+```
+
+$~$
+
+```{r}
+# Mean for yr 2016 
+
+round(mean(Street_Easy_All$Year_2016_All))
+
+round(mean(Street_Easy_All$Year_2016_Studio))
+
+round(mean(Street_Easy_All$Year_2016_OneBdr))
+
+round(mean(Street_Easy_All$Year_2016_TwoBdr))
+
+round(mean(Street_Easy_All$Year_2016_ThreeBdrs))
+```
+
+$~$
+
+```{r}
+# Mean for yr 2017
+
+round(mean(Street_Easy_All$Year_2017_All))
+
+round(mean(Street_Easy_All$Year_2017_Studio))
+
+round(mean(Street_Easy_All$Year_2017_OneBdr))
+
+round(mean(Street_Easy_All$Year_2017_TwoBdr))
+
+round(mean(Street_Easy_All$Year_2017_ThreeBdrs))
+```
+
+$~$
+
+```{r}
+# Mean for yr 2018
+
+round(mean(Street_Easy_All$Year_2018_All))
+
+round(mean(Street_Easy_All$Year_2018_Studio))
+
+round(mean(Street_Easy_All$Year_2018_OneBdr))
+
+round(mean(Street_Easy_All$Year_2018_TwoBdr))
+
+round(mean(Street_Easy_All$Year_2018_ThreeBdrs))
+```
+
+$~$
+
+```{r}
+# Mean for yr 2019
+
+round(mean(Street_Easy_All$Year_2019_All))
+
+round(mean(Street_Easy_All$Year_2019_Studio))
+
+round(mean(Street_Easy_All$Year_2019_OneBdr))
+
+round(mean(Street_Easy_All$Year_2019_TwoBdr))
+
+round(mean(Street_Easy_All$Year_2019_ThreeBdrs))
+```
+
+$~$
+
+```{r}
+# Mean for yr 2020
+
+round(mean(Street_Easy_All$Year_2020_All))
+
+round(mean(Street_Easy_All$Year_2020_Studio))
+
+round(mean(Street_Easy_All$Year_2020_OneBdr))
+
+round(mean(Street_Easy_All$Year_2020_TwoBdr))
+
+round(mean(Street_Easy_All$Year_2020_ThreeBdrs))
+```
+
+$~$
+
+```{r}
+# Mean for yr 2021
+
+round(mean(Street_Easy_All$Year_2021_All))
+
+round(mean(Street_Easy_All$Year_2021_Studio))
+
+round(mean(Street_Easy_All$Year_2021_OneBdr))
+
+round(mean(Street_Easy_All$Year_2021_TwoBdr))
+
+round(mean(Street_Easy_All$Year_2021_ThreeBdrs))
 ```
 
 
-### Exploratory Data Analysis
+$~$
 
-### References
+```{r}
+# Count of Area_Type
+area_type <- Street_Easy_All %>%
+  group_by(Area_Type) %>%
+  summarise(num=n()) %>%
+  arrange(desc(num))
+head(area_type, n = 5)
+```
 
+$~$
+
+#### Write .csv file for Street_Easy_All
+*This file will be helpful for Tableau Public*
+
+```{r}
+# commenting out so that it doesn't replicate in the system
+
+#write.csv(Street_Easy_All, "/Users/letiix3/Desktop/Data-607/Final Project/csv files/Street_Easy_All.csv")
+```
+
+$~$
+
+## Codecademy + StreetEasy Data Wrangling
+Rows: 5,000
+Columns: 20
+
+Codecademy + StreetEasy: sample of 5,000 rental listings in Manhattan, Brooklyn, and Queens from June 2016.
+
+$~$
+
+Headers              | Description
+---------------------|----------------------------------
+rental_id            |    rental ID
+building_id          |    building ID
+rent                 |    price of rent($)
+bedrooms             |    number of bedrooms
+bathrooms            |    number of bathrooms
+size_sqft            |    size in square feet
+min_to_subway        |    distance from subway station in minutes
+floor                |    floor number
+building_age_yrs     |    building's age in years
+no_fee               |    does it have a broker fee? (0 for fee, 1 for no fee)
+has_rooftdeck        |    does it have a roof deck? (o for no, 1 for yes)
+has_washer_dryer     |    does it have washer/dryer in unit (0/1)
+has_doorman          |    does it have a doorman? (0/1)
+has_elevator         |    does it have an elevator? (0/1)
+has_dishwasher       |    does it have a dishwasher? (0/1)
+has_patio            |    does the building have a gym? (0/1)
+has_gym              |    does the building have a gym? (0/1)
+neighborhood         |    neighborhood (ex: Greenpoint)
+submarket            |    submarket (ex: North Brooklyn)
+borough              |    borough (ex: Brooklyn)
+
+$~$
+
+### Load Codecademy + StreetEasy Data
+
+```{r}
+# Codecademy + StreetEasy
+street_easy_cc <- read.csv("https://raw.githubusercontent.com/Codecademy/datasets/master/streeteasy/streeteasy.csv", header = TRUE)
+```
+
+$~$
+
+```{r}
+# commenting out so that it does not reproduce
+
+#glimpse(street_easy_cc)
+```
+
+$~$
+
+```{r}
+# Remove columns not needed
+street_easy_cc <- street_easy_cc[, -c(2, 6:17)]
+
+# Rename columns
+colnames(street_easy_cc) <- c("Rental_ID", "Rent_Price", "No_Bedrooms", "No_Bathrooms", "Neighborhood", "SubMarket", "Borough" )
+
+head(street_easy_cc, n = 4)
+```
+
+$~$
+
+#### Write .csv file for Codecademy + StreetEasy
+*This file will be helpful for Tableau Public*
+
+```{r}
+# commenting out so that it doesn't replicate in the system
+
+#write.csv(street_easy_cc, "/Users/letiix3/Desktop/Data-607/Final Project/csv files/street_easy_cc.csv")
+```
+
+$~$
+
+## Codecademy + StreetEasy Data Exploration
+
+$~$
+
+```{r}
+summary(street_easy_cc)
+```
+
+$~$
+
+```{r}
+# Count of Bedrooms
+bedrooms <- street_easy_cc%>%
+  group_by(No_Bedrooms)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(bedrooms)
+```
+
+$~$
+
+```{r}
+# Count of Bathrooms
+bathrooms <- street_easy_cc%>%
+  group_by(No_Bathrooms)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(bathrooms)
+```
+
+$~$
+
+```{r}
+# Count of Neighborhood
+neighborhood <- street_easy_cc%>%
+  group_by(Neighborhood)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(neighborhood, n = 6)
+```
+
+$~$
+
+```{r}
+# Count of Submarket
+submarket<- street_easy_cc%>%
+  group_by(SubMarket)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(submarket)
+```
+
+$~$
+
+```{r}
+# Count of Borough
+borough <- street_easy_cc%>%
+  group_by(Borough)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(borough)
+```
+
+$~$
+
+```{r}
+# Mean for Rent Price
+round(mean(street_easy_cc$Rent_Price))
+```
+
+$~$
+
+## Apartment List State Data Wrangling
+Rows: 206 
+Columns: 62
+
+$~$
+
+### Load Apartment List Data
+Apartment List State data set from 2017 - October 2021.
+
+```{r}
+# Load Data
+
+apt_list_state <- read.csv("https://raw.githubusercontent.com/letisalba/Data-607/main/Final%20Project/csv%20files/State_AptList_Rent.csv", header=TRUE, stringsAsFactors=FALSE, na.strings=c(""," ","NA"));
+```
+
+$~$
+
+```{r}
+# Rename columns
+colnames(apt_list_state) <- c("State_Name", "FIPS_Code", "Population", "Bedroom_Size", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021")
+
+# Replace all NA values with 0
+apt_list_state <- apt_list_state %>% replace(is.na(.), 0)
+```
+
+$~$
+
+```{r}
+# Make 5 - 62 numeric
+apt_list_state <- apt_list_state %>% 
+     mutate_at(c(5:62), as.numeric)
+```
+
+$~$
+
+```{r}
+# Rename values in Bedroom_Size column to remove punctuation
+Apt_list_state <- recode(apt_list_state$Bedroom_Size,
+                         "_Overall" = "Overall",
+                         "_Studio" = "Studio")
+head(Apt_list_state)
+```
+
+$~$
+
+```{r}
+# cbind tables
+Apt_List_state <- cbind(apt_list_state, Apt_list_state)
+
+# Drop column not needed
+Apt_List_state <- Apt_List_state[, -c(4)]
+
+# Rename column Apt_list_state to Bedroom_size
+colnames(Apt_List_state) <- c("State_Name", "FIPS_Code", "Population", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021", "Bedroom_size")
+
+# Reorder columns
+col_order <- c("State_Name", "FIPS_Code", "Population", "Bedroom_size", "Jan_2017", "Feb_2017", "Mar_2017", "Apr_2017", "May_2017", "Jun_2017", "Jul_2017", "Aug_2017", "Sep_2017", "Oct_2017", "Nov_2017", "Dec_2017", "Jan_2018", "Feb_2018", "Mar_2018", "Apr_2018", "May_2018", "Jun_2018", "Jul_2018", "Aug_2018", "Sep_2018", "Oct_2018", "Nov_2018", "Dec_2018", "Jan_2019", "Feb_2019", "Mar_2019", "Apr_2019", "May_2019", "Jun_2019", "Jul_2019", "Aug_2019", "Sep_2019", "Oct_2019", "Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020",  "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021", "Sep_2021", "Oct_2021")
+
+Apt_List_state <- Apt_List_state[, col_order]
+```
+
+$~$
+
+#### Year 2017
+
+```{r}
+# Select columns from 2017
+rent_state_2017 <- Apt_List_state %>% 
+  select(5:16)
+
+
+# cbind new columns with Mean of 2017
+rent_state_17 <- cbind(rent_state_2017, Average_Rent_State_17 = round(rowMeans(rent_state_2017)))
+```
+
+$~$
+
+#### Year 2018
+
+```{r}
+# Select columns from 2018
+rent_state_2018 <- Apt_List_state %>% 
+  select(17:28)
+
+# cbind new columns with Mean of 2018
+rent_state_18 <- cbind(rent_state_2018, Average_Rent_State_18 = round(rowMeans(rent_state_2018)))
+```
+
+$~$
+
+#### Year 2019
+
+```{r}
+# Select columns from 2019
+rent_state_2019 <- Apt_List_state %>% 
+  select(29:40)
+
+# cbind new columns with Mean of 2019
+rent_state_19 <- cbind(rent_state_2019, Average_Rent_State_19 = round(rowMeans(rent_state_2019)))
+```
+
+$~$
+
+#### Year 2020
+
+```{r}
+# Select columns from 2020
+rent_state_2020 <- Apt_List_state %>% 
+  select(41:52)
+
+# cbind new columns with Mean of 2019
+rent_state_20 <- cbind(rent_state_2020, Average_Rent_State_20 = round(rowMeans(rent_state_2020)))
+```
+
+$~$
+
+#### Year 2021
+
+```{r}
+# Select columns from 2021
+rent_state_2021 <- Apt_List_state %>% 
+  select(53:62)
+
+# cbind new columns with Mean of 2021
+rent_state_21 <- cbind(rent_state_2021, Average_Rent_State_21 = round(rowMeans(rent_state_2021)))
+```
+
+$~$
+
+```{r}
+# cbind all tables with the mean and drop all columns not needed
+Apartment_List_State <-  cbind(Apt_List_state, rent_state_17, rent_state_18, rent_state_19, rent_state_20, rent_state_21)
+Apartment_List_State <- Apartment_List_State[-c(5:74, 76:87, 89:100, 102:113, 115:124)]
+head(Apartment_List_State, n = 3)
+```
+
+$~$
+
+#### Write .csv file for Apartment List
+*This file will be helpful for Tableau Public*
+
+```{r}
+# commenting out so that it doesn't replicate in the system
+
+#write.csv(Apartment_List_State, "/Users/letiix3/Desktop/Data-607/Final Project/csv files/Apartment_List_State.csv")
+```
+
+$~$
+
+## Apartment List State Data Exploration
+
+$~$
+
+```{r}
+summary(Apartment_List_State)
+```
+
+$~$
+
+```{r}
+# Count of Bedroom_size
+Bdr_size <- Apartment_List_State%>%
+  group_by(Bedroom_size)%>%
+  summarise(num=n())%>%
+  arrange(desc(num))
+head(Bdr_size)
+```
+
+$~$
+
+```{r}
+# Count of State and filtering out NY
+state <- Apartment_List_State %>%
+  group_by(State_Name) %>%
+  filter(State_Name == "New York") %>% 
+  summarise(num=n()) %>%
+  arrange(desc(num))
+head(state)
+```
+
+$~$
+
+```{r}
+# Mean yr 2017
+round(mean(Apartment_List_State$Average_Rent_State_17))
+```
+
+$~$
+
+```{r}
+# Mean yr 2018
+round(mean(Apartment_List_State$Average_Rent_State_18))
+```
+
+$~$
+
+```{r}
+# Mean yr 2019
+round(mean(Apartment_List_State$Average_Rent_State_19))
+```
+
+$~$
+
+```{r}
+# Mean yr 2020
+round(mean(Apartment_List_State$Average_Rent_State_20))
+```
+
+$~$
+
+```{r}
+# Mean yr 2021
+round(mean(Apartment_List_State$Average_Rent_State_21))
+```
+
+$~$
+
+## GGPLOT
+
+$~$
+
+### Import Libraries
+
+```{r}
+# Libraries
+library(ggplot2)
+library(hrbrthemes)
+hrbrthemes::import_roboto_condensed()
+library(viridis)
+library(plotly)
+```
+
+$~$
+
+```{r}
+# Bar plot for all Rent Averages in the boroughs
+Street_Easy_All %>%
+  mutate(Averages = Year_2016_All + Year_2017_All + Year_2018_All + Year_2019_All + Year_2020_All + Year_2021_All + Year_2016_Studio  + Year_2017_Studio + Year_2018_Studio + Year_2019_Studio + Year_2020_Studio + Year_2021_Studio + Year_2016_OneBdr + Year_2017_OneBdr + Year_2018_OneBdr + Year_2019_OneBdr + Year_2020_OneBdr + Year_2021_OneBdr +   
+Year_2016_TwoBdr + Year_2017_TwoBdr + Year_2018_TwoBdr +  
+Year_2019_TwoBdr + Year_2020_TwoBdr + Year_2021_TwoBdr +   
+Year_2016_ThreeBdrs + Year_2017_ThreeBdrs + Year_2018_ThreeBdrs +
+Year_2019_ThreeBdrs + Year_2020_ThreeBdrs + Year_2021_ThreeBdrs) %>% # Creating cumulative time
+  ggplot(aes(x = Borough, y = Averages, fill = Averages)) + # Passing plot arguments
+  geom_bar(stat = "Identity") # Specifying the type of plot
+```
+
+$~$
+
+```{r}
+Street_Easy_All %>%
+  pivot_longer(4:9, names_to = "Averages", values_to = "Value") %>%
+  ggplot(aes(x = Averages)) +
+  geom_bar() +
+  facet_wrap(vars(Averages), ncol = 3) +
+  labs(x = "Rent Averages", y = "Count", title = "All Apartment Types")
+```
+
+$~$
+
+```{r}
+Street_Easy_Studio %>%
+  pivot_longer(4:9, names_to = "Averages", values_to = "Value") %>%
+  ggplot(aes(x = Averages)) +
+  geom_bar() +
+  facet_wrap(vars(Averages), ncol = 3) +
+  labs(x = "Rent Averages", y = "Count", title = "Studio's")
+```
+
+$~$
+
+```{r}
+# Plot for original dataset of All dataset
+streeteasy_all %>%
+  pivot_longer(4:15, names_to = "Averages", values_to = "Value") %>%
+  ggplot(aes(x = Value, color = "blue")) +
+  facet_wrap(vars(Averages), ncol = 3) +
+  geom_point(stat = "count") +
+  geom_line(stat = "count") +
+  labs(x = "Rent Cost per Month", y = "Count")
+```
+
+$~$
+
+```{r}
+# Count of Borough's for Codecademy dataset
+street_easy_cc %>% 
+  ggplot(aes(x = Borough, fill = Borough)) +
+  geom_bar(stat = "count") +
+  labs(x = "Boroughs", y = "Count")
+```
+
+$~$
+
+```{r}
+# Codecademy Count of Rent Prices
+street_easy_cc %>% 
+ggplot(aes(x=Rent_Price)) + 
+  geom_histogram(binwidth=15, fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+    ggtitle("Rent Prices") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+```
+
+$~$
+
+```{r}
+# Density plot for Borough and Rent Price in Codecademy
+street_easy_cc %>% 
+ggplot(aes(x = Rent_Price, group = Borough, fill = Borough)) +
+    geom_density(adjust = 1.0) +
+    theme_ipsum() +
+    facet_wrap(~Borough) +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      axis.ticks.x=element_blank()
+    )
+```
+
+$~$
+
+```{r}
+# Line plot for Rent Price and Number of Bedrooms in Codecademy
+street_easy_cc %>%
+  tail(10) %>%
+  ggplot( aes(x = Rent_Price, y = No_Bedrooms)) +
+    geom_line() +
+    geom_point()
+```
+
+$~$
+
+```{r}
+# Plot .long for Codecademy
+street_easy_cc.long <- street_easy_cc %>% 
+  select("Neighborhood", "Rent_Price") %>% 
+  pivot_longer(-Neighborhood, names_to = "Year", values_to = "Rent_Price")
+
+ggplot(street_easy_cc.long, aes(Neighborhood, Rent_Price, colour = Year)) + geom_line()
+```
+
+$~$
+
+```{r}
+# This plot came out a bit cluttered
+rental_price <- street_easy_cc %>% select("Borough", "No_Bedrooms", "Rent_Price")
+plot_ly(rental_price, x = ~No_Bedrooms, y = ~Rent_Price, color = ~Borough, type = 'scatter', mode = 'lines')
+```
+
+$~$
+
+## Tableau Public
+
+### [Plots for Data Sets](https://public.tableau.com/app/profile/leticia.salazar3386/viz/Data607FinalProject-Street_Easy/MapRentAvg#1)
+
+![](/Users/letiix3/Desktop/Data-607/Final Project/Pictures/Map Avg Rent 2020.png)
+
+$~$
+
+## Conclusion
+#### Each dataset required a bit of wrangling but after some exploration I found the following results:
+* From the StreetEasy data set the 5 boroughs ranked:
+  * Queens with 60 counts
+  * Brooklyn with 55 counts
+  * Bronx with 43 counts
+  * Manhattan with 38 counts and
+  * Staten Island with 1 count
+  
+#### When taking into consideration the apartment types within the StreetEasy data set the rent averages per year were:
+  * 2016 - $1730
+  * 2017 - $1798
+  * 2018 - $1830
+  * 2019 - $1902
+  * 2020 - $1760
+  * 2021 - $1780
+  
+#### How does that compare to the entire United States? From the table below, overall, New York has a higher average rent from the years 2017 - 2021. There was about a $700 difference between the years 2017 - 2019 but from 2020 - 2021 the difference dropped to about $500. 
+
+$~$
+
+```{r}
+# Comparison of all apartment types for year 2017 - 2021 Apartment List and StreetEasy
+comparison <- data.frame(Year = c(2017, 2018, 2019, 2020, 2021),
+                 Avg_Rent_US = c(1091, 1120, 1152, 1162, 1241),
+                 New_York = c(1798, 1830, 1902, 1760, 1780))
+comparison
+```
+
+$~$
+
+#### Digging deeper, using the Apartment List data set, I am comparing the years 2019 - 2021 with the average cost of each apartment types and obtained the results below: 
+
+```{r}
+# Comparison of all apartment types for year 2019 - 2021 from Apartment List
+comparison2 <- data.frame(Apt_Type = c("Studio", "One_Bdr", "Two_Bdrs", "Three_Bdrs", "Four_Bdrs"),
+                 "Yr_2019" = c(853, 912, 1111, 1336, 1587),
+                 "Yr_2020" = c(860, 919, 1121, 1349, 1601),
+                 "Yr_2021" = c(917, 981, 1197, 1441, 1710))
+comparison2
+```
+
+$~$
+
+#### For all 5 apartment types there is a small increase in rent of about 7% from 2019 to 2021. 
+
+$~$
+
+#### After importing my data sets into Tableau Public I was able to create more visuals that led to the following conclusions:
+
+
+* From the StreetEasy data the areas in NYC with the highest average rent are Central Park South, Battery Park City, Tribeca, Soho and Midtown. No surprise it's only Manhattan!
+* Looking at the all the boroughs, Manhattan, Brooklyn and Queens are the top three with the highest rents.
+* From Codecademy + StreetEasy data set from June 2016, the most number  of bedrooms in apartments were 1 and 2 bedrooms followed by studios. 
+* Top 6 Neighborhoods were Upper West Side, Upper East Side, Midtown East, Midtown West, Williamsburg and the Financial District. 
+* With the top 3 boroughs the neighborhoods with the highest average rent are:
+  * Brooklyn
+    * Dumbo
+    * Brooklyn Heights
+    * Carroll Gardens
+    * Prospect Heights
+    * Fort Greene
+  * Manhattan
+    * Soho
+    * Tribeca
+    * Central Park South
+    * Nolita
+    * Chelsea
+  * Queens
+    *Long Island City
+    * South Richmond Hill
+    * Astoria
+    * Flushing
+    * Ridgewood
+    
+#### The pandemic has affected rent prices all throughout the United States. Although the most expensive states saw rent price drops between 2020 and 2021, there have been increases in average rent as well in the US. New York has one of the highest average in rent prices compared to the United States overall. Not only that but based on these numbers I predict that apartment rental prices will continue to rise an average of about 7% within the next two years.
+
+$~$
+
+## References
+
+1. Streeteasy Data Dashboard: StreetEasy. StreetEasy Blog. (2019, November 20). Retrieved November 14, 2021, from https://streeteasy.com/blog/data-dashboard/. 
+
+$~$
+
+2. Salviati, C., Popov, I., Warnock, R., &amp; Szini, L. (2021, November 30). Apartment List National Rent Report. Apartment List - More than 5 Million Apartments for Rent. Retrieved November 14, 2021, from https://www.apartmentlist.com/research/national-rent-data. 
+
+$~$
+
+3. Last Updated: October 26. (2021, October 26). Average rent by year [1940-2021]: Historical rental rates. iPropertyManagement.com. Retrieved November 14, 2021, from https://ipropertymanagement.com/research/average-rent-by-year. 
+
+$~$
+
+4. Statista Research Department. (2021, August 25). Topic: Rental market in the U.S. Statista. Retrieved November 14, 2021, from https://www.statista.com/topics/4465/rental-market-in-the-us/#dossierKeyfigures. 
+
+$~$
+
+5. https://github.com/Codecademy/datasets/tree/master/streeteasy
+
+$~$
+
+6. https://www.sharpsightlabs.com/blog/small-multiples-ggplot/
+
+$~$
+
+7. https://www.neonscience.org/resources/learning-hub/tutorials/dc-time-series-plot-ggplot-r
